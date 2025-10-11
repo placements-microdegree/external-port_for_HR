@@ -36,3 +36,163 @@
     transform: rotate(360deg);
   }
 }
+
+.text-gradient {
+  background: linear-gradient(90deg, #007bff, #00bcd4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #007bff, #00bcd4);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(90deg, #0056b3, #0097a7);
+  color: #fff;
+}
+
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.bright-input {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+.bright-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+.modal-content {
+  animation: fadeInUp 0.4s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.text-glow {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6),
+    0 0 30px rgba(0, 200, 255, 0.4);
+}
+
+.hero-section .btn:hover {
+  transform: scale(1.05);
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 25px rgba(0, 198, 167, 0.4);
+}
+
+/* 🌟 Request Modal Premium Design */
+.request-modal .modal-content {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 123, 255, 0.15);
+}
+
+.request-modal .modal-header {
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+}
+
+.request-modal .modal-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.3px;
+}
+
+.request-modal .form-control {
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  transition: all 0.25s ease-in-out;
+  font-weight: 500;
+}
+
+.request-modal .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+.request-modal label {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.request-modal .btn-primary {
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  border: none;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: all 0.25s ease;
+}
+
+.request-modal .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.request-modal .btn-secondary {
+  background: #e9ecef;
+  border: none;
+  color: #333;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: all 0.25s ease;
+}
+
+.request-modal .btn-secondary:hover {
+  background: #d8dee6;
+}
+
+/* 🌟 Enhanced Modal Header */
+.recruiter-modal-header {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(90deg, #007bff, #00c6ff);
+  color: white !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-bottom: none;
+}
+
+/* ✨ Title Glitter Bar (full width version for better visibility) */
+.title-glitter-bar {
+  height: 5px;
+  width: 100%;
+  margin: 0 auto 10px auto;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #007bff, #00c6ff, #7dd3fc);
+  background-size: 200% 200%;
+  animation: shimmerBlue 2.5s infinite linear;
+  box-shadow: 0 3px 12px rgba(0, 123, 255, 0.3);
+}
+
+
+
