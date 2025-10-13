@@ -43,7 +43,8 @@ export default function RecruiterDashboard() {
           }
           return (b.rank_points || 0) - (a.rank_points || 0);
         });
-        setStudents(sorted.slice(0, 10));
+        // setStudents(sorted.slice(0, 10));
+        setStudents(sorted);
       }
     };
 
@@ -67,12 +68,22 @@ export default function RecruiterDashboard() {
     };
   }, []);
 
+  // const getExperienceRange = (exp) => {
+  //   if (!exp && exp !== 0) return null;
+  //   if (exp < 0.5) return "Fresher"; // 0–6 months
+  //   if (exp >= 0.5 && exp < 3) return "Early Professional"; // 6 months – 3 years
+  //   if (exp >= 3 && exp < 7) return "Mid"; // 3–7 years
+  //   return "Senior"; // 7+ years
+  // };
+
+  // ✅ FIXED: safely parse exp before comparing
   const getExperienceRange = (exp) => {
-    if (!exp && exp !== 0) return null;
-    if (exp < 0.5) return "Fresher"; // 0–6 months
-    if (exp >= 0.5 && exp < 3) return "Early Professional"; // 6 months – 3 years
-    if (exp >= 3 && exp < 7) return "Mid"; // 3–7 years
-    return "Senior"; // 7+ years
+    const val = parseFloat(exp);
+    if (isNaN(val)) return null;
+    if (val < 0.5) return "Fresher";
+    if (val >= 0.5 && val < 3) return "Early Professional";
+    if (val >= 3 && val < 7) return "Mid";
+    return "Senior";
   };
 
   const toggleExperience = (range) => {
@@ -440,14 +451,28 @@ export default function RecruiterDashboard() {
                       <div className="candidate-name">{s.full_name}</div>
                     </td>
                     <td>
-                      {s.primary_skills &&
+                      {/* {s.primary_skills &&
                         s.primary_skills.split(",").map((skill, i) => (
                           <span key={i} style={{ marginRight: "6px" }}>
                             <SkillBadge skill={skill.trim()} />
                           </span>
-                        ))}
+                        ))} */}
+
+                      {/* ✅ FIXED: safely handle empty/null skills */}
+                      {s.primary_skills ? (
+                        s.primary_skills
+                          .split(",")
+                          .filter((skill) => skill.trim() !== "")
+                          .map((skill, i) => (
+                            <span key={i} style={{ marginRight: "6px" }}>
+                              <SkillBadge skill={skill.trim()} />
+                            </span>
+                          ))
+                      ) : (
+                        <span className="text-muted">No Skills</span>
+                      )}
                     </td>
-                    <td>{s.experience || "—"} years</td>
+                    <td>{s.experience || "0"} years</td>
                     <td>{s.notice_period || "—"}</td>
                     <td>
                       {s.preferred_location
@@ -489,7 +514,7 @@ export default function RecruiterDashboard() {
                                 const inLpa = value / 100000;
                                 return `${inLpa.toFixed(1)} LPA`;
                               })()
-                            : "—"}
+                            : "0 LPA"}
                         </td>
                       </td>
                     </td>

@@ -1,55 +1,123 @@
-.clear-filter-btn {
-  transition: all 0.2s ease-in-out;
-}
-.clear-filter-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+/* 🌐 BASE TABLE */
+.table {
+  border-collapse: collapse !important;
+  width: 100%;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-/* 🎨 Candidate Name + Tag Styling */
+/* 🧩 HEADER */
+.table thead th {
+  background: #007bff; /* Solid corporate blue */
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 14px 18px !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  border: none !important;
+  text-align: left;
+}
+
+.table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+.table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+
+/* 🧱 ROWS */
+.table tbody tr {
+  border-bottom: 1px solid #e5e5e5;
+  background: #ffffff;
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: #f8f9ff;
+}
+
+/* 🪶 CELLS */
+.table td {
+  padding: 12px 18px !important;
+  border: none !important;
+  color: #333;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+/* 🎯 TAGS (Top Performer, Final Round, etc.) */
+.candidate-tag {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-transform: uppercase;
+  color: #fff;
+  margin-left: 8px;
+}
+
+.candidate-tag.top-performer {
+  background-color: #ff9800;
+}
+.candidate-tag.final-round {
+  background-color: #6f42c1;
+}
+.candidate-tag.recommended {
+  background-color: #28a745;
+}
+.candidate-tag.most-popular {
+  background-color: #17a2b8;
+}
+
+/* 🧾 SKILLS BADGE */
+.skill-badge {
+  background: #e9f3ff;
+  color: #007bff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-right: 6px;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* 🧭 LOCATION BADGE */
+.table td span[style*="padding: 8px 14px"] {
+  border-radius: 14px !important;
+  background: #e9f3ff !important;
+  color: #007bff !important;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* 📄 RESUME BUTTON */
+.table td button {
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-weight: 600;
+  color: #007bff;
+  border: 1px solid #007bff;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.table td button:hover {
+  background: #007bff;
+  color: #fff;
+}
+
+/* 🧠 CANDIDATE NAME */
 .candidate-name-cell {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
 }
-
-.candidate-tag {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.5rem;
-  font-weight: 600;
-  color: #fff;
-  padding: 3px 8px;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  gap: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  
-  
-}
-
-/* 🎯 Dynamic tag colors */
-.candidate-tag.top-performer {
-  background-color: #ff9800; /* Orange */
-  
-}
-
-.candidate-tag.final-round {
-  background-color: #6f42c1; /* Purple */
-}
-
-.candidate-tag.recommended {
-  background-color: #17a2b8; /* Teal */
-}
-
-.candidate-tag.most-popular {
-  background-color: #ff4500; /* Red-Orange */
-}
-
 .candidate-name {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   color: #212529;
 }
-
