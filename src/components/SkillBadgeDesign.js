@@ -1,29 +1,27 @@
-// src/components/SkillBadgeDesign.js
 import React from "react";
 
-// 🎨 Color palette for skill bubbles (light background + dark text)
+// 🎨 Airtable-style color palette
 const skillColors = {
-  aws: { bg: "#FFF7E6", color: "#E67E22" },
-  docker: { bg: "#E6F2FF", color: "#007BFF" },
-  kubernetes: { bg: "#E9EEFF", color: "#304FFE" },
-  terraform: { bg: "#EFE6FF", color: "#6C3EFF" },
-  prometheus: { bg: "#FFF0E6", color: "#E74C3C" },
-  grafana: { bg: "#FFF5E6", color: "#E67E22" },
-  azure: { bg: "#E6F0FF", color: "#0078D7" },
-  gcp: { bg: "#FFF8E6", color: "#EA4335" },
-  rds: { bg: "#E6F8FF", color: "#007CBA" },
-  linux: { bg: "#FFFBE6", color: "#000000" },
-  networking: { bg: "#E6FFF2", color: "#009970" },
-  "ci/cd": { bg: "#F4E6FF", color: "#8000FF" },
+  aws: { bg: "#E6F4EA", color: "#1B5E20" },           // soft green
+  docker: { bg: "#E3F2FD", color: "#0D47A1" },        // soft blue
+  kubernetes: { bg: "#E8EAF6", color: "#283593" },    // indigo
+  terraform: { bg: "#F3E5F5", color: "#6A1B9A" },     // lavender
+  prometheus: { bg: "#FBE9E7", color: "#D84315" },    // orange
+  grafana: { bg: "#FFF3E0", color: "#E65100" },       // amber
+  ansible: { bg: "#FFEBEE", color: "#B71C1C" },       // red
+  linux: { bg: "#F1F8E9", color: "#33691E" },         // green
+  networking: { bg: "#E0F7FA", color: "#006064" },    // teal
+  jenkins: { bg: "#FFF8E1", color: "#795548" },       // light brown
+  git: { bg: "#FBE9E7", color: "#BF360C" },           // orange brown
+  ci: { bg: "#E8F5E9", color: "#1B5E20" },            // green
+  cd: { bg: "#E3F2FD", color: "#0D47A1" },            // blue
+  default: { bg: "#F5F5F5", color: "#424242" },       // neutral grey
 };
 
-// 🟢 SkillBadge component — creates soft color-coded skill bubbles
+// 🧩 Airtable-Style Badge Component
 export const SkillBadge = ({ skill }) => {
   const normalized = skill.trim().toLowerCase();
-  const { bg, color } = skillColors[normalized] || {
-    bg: "#F1F1F1",
-    color: "#333",
-  };
+  const { bg, color } = skillColors[normalized] || skillColors.default;
 
   return (
     <span
@@ -31,21 +29,22 @@ export const SkillBadge = ({ skill }) => {
         backgroundColor: bg,
         color,
         fontWeight: "600",
-        padding: "8px 14px",
-        borderRadius: "25px",
-        fontSize: "0.65rem",
+        padding: "3px 10px",
+        borderRadius: "12px",
+        fontSize: "0.7rem",
+        margin: "2px 4px",
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        boxShadow: "0 3px 8px rgba(0,0,0,0.08)",
-        border: `1px solid ${color}20`,
-        transition: "transform 0.2s ease",
+        border: `1px solid ${color}25`,
+        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        transition: "all 0.2s ease-in-out",
+        whiteSpace: "nowrap",
       }}
       onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-      onMouseLeave={(e) => (e.target.style.transform = "scale(1.0)")}
+      onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
     >
       {skill.trim()}
     </span>
   );
 };
-

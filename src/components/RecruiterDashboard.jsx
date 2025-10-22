@@ -15,6 +15,8 @@ import {
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SkillBadge } from "./SkillBadgeDesign";
+import FAQSection from "./FAQSection";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 export default function RecruiterDashboard() {
   const [students, setStudents] = useState([]);
@@ -180,6 +182,40 @@ export default function RecruiterDashboard() {
       alert("Something went wrong while submitting. Please try again.");
     }
   };
+  // ✅ Universal Resume Downloader with Candidate Name
+  const handleDownload = (url, candidateName = "Candidate") => {
+    if (!url) {
+      alert("No file found to download.");
+      return;
+    }
+
+    let downloadUrl = url;
+
+    // 🟢 Convert Google Drive preview → direct download
+    if (url.includes("drive.google.com")) {
+      const match = url.match(/\/d\/(.*?)\//);
+      if (match && match[1]) {
+        downloadUrl = `https://drive.google.com/uc?export=download&id=${match[1]}`;
+      }
+    }
+
+    // 🟢 Convert Supabase or Firebase URLs (if any)
+    if (url.includes("supabase") && url.includes("/object/public/")) {
+      downloadUrl = url.replace("/preview", "");
+    }
+
+    // 🧠 Clean filename: replace spaces with underscores
+    const safeName = candidateName.replace(/\s+/g, "_");
+
+    // 🟢 Trigger the browser download
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.setAttribute("download", `${safeName}_Resume.pdf`);
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div
@@ -194,7 +230,7 @@ export default function RecruiterDashboard() {
         {/* 🌟 Header */}
         {/* 🌟 Dynamic Monthly Header */}
         <motion.div
-          className="p-5 text-center rounded-4 mb-5 d-flex flex-column flex-md-row align-items-center justify-content-center"
+          className="recruiter-header p-5 text-center rounded-4 mb-5 d-flex flex-column flex-md-row align-items-center justify-content-center"
           style={{
             background: "linear-gradient(90deg, #007bff, #00c6ff)",
             boxShadow: "0 8px 25px rgba(0, 123, 255, 0.3)",
@@ -248,7 +284,7 @@ export default function RecruiterDashboard() {
           >
             <h1 className="fw-bold mb-2">
               Top <span style={{ color: "#fff" }}>Cloud</span> &{" "}
-              <span style={{ color: "#fff" }}>DevOps</span> Profiles —{" "}
+              <span style={{ color: "#fff" }}>DevOps</span> Profiles{" "}
               <span
                 style={{
                   color: "#ffe082",
@@ -262,7 +298,7 @@ export default function RecruiterDashboard() {
               </span>
             </h1>
             <p className="lead mb-0 text-light fw-semibold">
-              Verified professionals — ready to join your team 🚀
+              Verified professionals ready to join your team
             </p>
           </motion.div>
         </motion.div>
@@ -284,7 +320,7 @@ export default function RecruiterDashboard() {
 
           {/* ✅ Experience Level Checkboxes */}
           {/* 🌟 Experience Filters with Labels, Ranges, and Clear Option */}
-          <div className="d-flex flex-wrap justify-content-center align-items-center gap-4 mb-3 position-relative">
+          <div className="experience-filter-container d-flex flex-wrap justify-content-center align-items-center gap-4 mb-3 position-relative">
             {[
               { label: "Fresher", range: "0–6 months" },
               { label: "Early Professional", range: "6 months – 3 years" },
@@ -472,51 +508,86 @@ export default function RecruiterDashboard() {
                         <span className="text-muted">No Skills</span>
                       )}
                     </td>
-                    <td>{s.experience || "0"} years</td>
-                    <td>{s.notice_period || "—"}</td>
-                    <td>
-                      {s.preferred_location
-                        ? s.preferred_location.split(",").map((loc, i) => {
-                            const name = loc.trim().toLowerCase();
-                            const { bg, color } =
-                              locationColors[name] || locationColors.default;
-                            return (
-                              <span
-                                key={i}
-                                style={{
-                                  backgroundColor: bg,
-                                  color,
-                                  padding: "8px 14px",
-                                  borderRadius: "25px",
-                                  fontWeight: 600,
-                                  fontSize: "0.85rem",
-                                  marginRight: "6px",
-                                }}
-                              >
-                                {loc.trim()}
-                              </span>
-                            );
-                          })
-                        : "Remote"}
+                    <td style={{ fontWeight: 500 }}>
+                      {parseFloat(s.experience) === 0 || s.experience === "0"
+                        ? "Fresher"
+                        : `${s.experience} years`}
                     </td>
+
+                    {/* <td>{s.notice_period || "—"}</td> */}
+                    <td style={{ fontWeight: 500 }}>
+                      {s.notice_period === "0 days" ||
+                      s.notice_period === "0" ||
+                      s.notice_period?.toLowerCase() === "0 days" ? (
+                        <span>Immediate Joiner</span>
+                      ) : (
+                        <span>{s.notice_period || "—"}</span>
+                      )}
+                    </td>
+
                     <td>
-                      <td>
-                        <td>
-                          {s.current_ctc
-                            ? (() => {
-                                const value = parseFloat(s.current_ctc);
-                                if (isNaN(value)) return "—";
+                      {s.preferred_location ? (
+                        s.preferred_location.split(",").map((loc, i) => (
+                          <span
+                            key={i}
+                            style={{
+                              backgroundColor: "#F9FAFB", // very soft gray
+                              color: "#555", // muted text
+                              padding: "2px 8px",
+                              borderRadius: "6px",
+                              fontWeight: 500,
+                              fontSize: "0.75rem",
+                              marginRight: "6px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              border: "1px solid #E5E7EB", // subtle border
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="10"
+                              height="10"
+                              fill="#777"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M8 0a5.53 5.53 0 0 0-5.5 5.5C2.5 9.086 8 16 8 16s5.5-6.914 5.5-10.5A5.53 5.53 0 0 0 8 0Zm0 7.5A2 2 0 1 1 8 3.5a2 2 0 0 1 0 4Z" />
+                            </svg>
+                            {loc.trim()}
+                          </span>
+                        ))
+                      ) : (
+                        <span
+                          style={{
+                            backgroundColor: "#F9FAFB",
+                            color: "#777",
+                            padding: "2px 8px",
+                            borderRadius: "6px",
+                            fontSize: "0.75rem",
+                            fontWeight: 500,
+                            border: "1px solid #E5E7EB",
+                          }}
+                        >
+                          Remote
+                        </span>
+                      )}
+                    </td>
 
-                                // ✅ If the value looks like it's already in LPA (less than 100)
-                                if (value < 100) return `${value} LPA`;
+                    <td>
+                      {s.current_ctc
+                        ? (() => {
+                            const value = parseFloat(s.current_ctc);
+                            if (isNaN(value)) return "—";
 
-                                // ✅ If it's in absolute (like 3500000)
-                                const inLpa = value / 100000;
-                                return `${inLpa.toFixed(1)} LPA`;
-                              })()
-                            : "0 LPA"}
-                        </td>
-                      </td>
+                            // ✅ If the value looks like it's already in LPA (less than 100)
+                            if (value < 100) return `${value} LPA`;
+
+                            // ✅ If it's in absolute (like 3500000)
+                            const inLpa = value / 100000;
+                            return `${inLpa.toFixed(1)} LPA`;
+                          })()
+                        : "0 LPA"}
                     </td>
 
                     <td>
@@ -566,6 +637,7 @@ export default function RecruiterDashboard() {
       </div>
 
       {/* ✅ Resume Modal */}
+      {/* ✅ Resume Modal */}
       <AnimatePresence>
         {resumeModal && (
           <motion.div
@@ -580,6 +652,7 @@ export default function RecruiterDashboard() {
                 <div className="modal-header bg-primary text-white d-flex justify-content-between align-items-center">
                   <h5 className="modal-title mb-0">📄 Candidate Resume</h5>
                   <div className="d-flex align-items-center gap-2">
+                    {/* 🟦 Open in New Tab */}
                     <a
                       href={resumeModal}
                       target="_blank"
@@ -589,6 +662,24 @@ export default function RecruiterDashboard() {
                     >
                       Open in New Tab
                     </a>
+
+                    {/* 🟩 Force Download */}
+                    <button
+                      onClick={() =>
+                        handleDownload(
+                          resumeModal,
+                          filteredStudents.find(
+                            (s) => s.resume_url === resumeModal
+                          )?.full_name
+                        )
+                      }
+                      className="btn btn-success btn-sm fw-semibold"
+                      style={{ border: "none", color: "white" }}
+                    >
+                      ⬇️ Download
+                    </button>
+
+                    {/* ❌ Close Button */}
                     <button
                       type="button"
                       className="btn-close btn-close-white"
@@ -596,6 +687,7 @@ export default function RecruiterDashboard() {
                     ></button>
                   </div>
                 </div>
+
                 <div className="modal-body" style={{ height: "80vh" }}>
                   <iframe
                     src={
@@ -749,6 +841,7 @@ export default function RecruiterDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+      <FAQSection />
     </div>
   );
 }
