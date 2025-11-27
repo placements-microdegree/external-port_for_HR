@@ -17,7 +17,6 @@ import {
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SkillBadge } from "./SkillBadgeDesign";
-import FAQSection from "./FAQSection";
 import FiltersPanel from "./FiltersPanel";
 
 export default function RecruiterDashboardFixed() {
@@ -806,8 +805,6 @@ export default function RecruiterDashboardFixed() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      <FAQSection />
     </div>
   );
 }

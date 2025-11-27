@@ -1,24 +1,43 @@
+/* global globalThis */
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./RecruiterDashboard.css";
-import { supabase } from "../supabaseClient";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaCheckCircle, FaUserCheck } from "react-icons/fa";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { SkillBadge } from "./SkillBadgeDesign";
-import FAQSection from "./FAQSection";
+import { supabase } from "../supabaseClient";
 import FiltersPanel from "./FiltersPanel";
-import RecruiterHero from "./recruiter/RecruiterHero";
-import SearchPanel from "./recruiter/SearchPanel";
 import CandidateList from "./recruiter/CandidateList";
+import RecruiterNavbar from "./recruiter/RecruiterNavbar";
+import Footer from "./Footer";
+import { SkillBadge } from "./SkillBadgeDesign";
+import "./RecruiterDashboard.css";
+
+const MotionDialog = motion.dialog;
+
+const SHARE_BASE_URL = "http://localhost:3000";
+const TALLY_FORM_ID = "ob9eye";
+const TALLY_CONFIG = {
+  formId: TALLY_FORM_ID,
+  popup: {
+    emoji: {
+      text: "👋",
+      animation: "wave",
+    },
+  },
+};
+const TOP_COLLECTION_IDS = [
+  "ad2a2cd8-13df-4ec2-abbd-01b40285f9ec",
+  "d0432983-d366-47c2-abf9-66486fa17334",
+  "ab246d5a-a040-41f8-aaeb-1d44af8bc609",
+  "9016bc23-a977-43a3-bca6-271a01a08ffd",
+];
 
 const getInitialFilters = () => ({
   experience: new Set(),
@@ -46,10 +65,9 @@ const INTEREST_FORM_INITIAL = {
 };
 
 const COMPANY_WHATSAPP_NUMBER = "9380098592";
-const SHARE_BASE_URL = "https://talent.microdegree.work";
 
 const getExperienceBucket = (value) => {
-  const num = parseFloat(value);
+  const num = Number.parseFloat(value);
   if (Number.isNaN(num)) return null;
   if (num === 0) return "fresher";
   if (num > 0 && num <= 3) return "early";
@@ -68,7 +86,7 @@ const getNoticeBucket = (value) => {
   ) {
     return "Immediate";
   }
-  let numeric = parseFloat(normalized.replace(/[^0-9.]/g, ""));
+  let numeric = Number.parseFloat(normalized.replaceAll(/[^0-9.]/g, ""));
   if (Number.isNaN(numeric)) return null;
   if (normalized.includes("month")) {
     numeric *= 30;
@@ -91,7 +109,7 @@ const parseCSV = (value) =>
 
 const toLpa = (value) => {
   if (value === null || value === undefined) return 0;
-  const num = parseFloat(value);
+  const num = Number.parseFloat(value);
   if (Number.isNaN(num)) return 0;
   return num > 100 ? num / 100000 : num;
 };
@@ -137,6 +155,120 @@ const getWorkModeLabel = (value) => {
     .join(" ");
 };
 
+const formatMonthYear = (date = new Date()) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+const buildSearchHaystack = (student) =>
+  [
+    student.full_name,
+    student.primary_skills,
+    student.preferred_location,
+    student.primary_role,
+    student.role,
+    student.candidate_tag,
+  ]
+    .filter(Boolean)
+    .map((value) => String(value).toLowerCase());
+
+const matchesSearchQuery = (student, query) => {
+  if (!query) return true;
+  return buildSearchHaystack(student).some((value) => value.includes(query));
+};
+
+const toLowerCaseSet = (values = []) =>
+  new Set(values.map((value) => String(value).toLowerCase()));
+
+const matchesMultiValueFilter = (filterSet, values) => {
+  if (!filterSet.size) return true;
+  if (!values || values.length === 0) return false;
+  const loweredValues = toLowerCaseSet(values);
+  return Array.from(filterSet).every((entry) =>
+    loweredValues.has(String(entry).toLowerCase())
+  );
+};
+
+const matchesStringFilter = (filterSet, value) => {
+  if (!filterSet.size) return true;
+  const normalized = String(value ?? "").toLowerCase();
+  if (!normalized) return false;
+  return Array.from(filterSet).some((entry) =>
+    normalized.includes(String(entry).toLowerCase())
+  );
+};
+
+const matchesExperienceFilter = (student, filterSet) => {
+  if (!filterSet.size) return true;
+  const bucket = getExperienceBucket(student.experience);
+  return Boolean(bucket && filterSet.has(bucket));
+};
+
+const matchesNoticeFilter = (student, filterSet) => {
+  if (!filterSet.size) return true;
+  const noticeBucket = getNoticeBucket(student.notice_period);
+  return Boolean(noticeBucket && filterSet.has(noticeBucket));
+};
+
+const matchesWorkModeFilter = (student, filterSet) => {
+  if (!filterSet.size) return true;
+  const workModeLabel = getWorkModeLabel(student.work_mode);
+  return Boolean(workModeLabel && filterSet.has(workModeLabel));
+};
+
+const matchesTopCandidateFilter = (student, requireTopCandidate) => {
+  if (!requireTopCandidate) return true;
+  return (
+    String(student.top_candidates ?? "")
+      .trim()
+      .toLowerCase() === "yes"
+  );
+};
+
+const matchesAllFilters = (student, filterState) => {
+  if (!matchesExperienceFilter(student, filterState.experience)) return false;
+  if (
+    !matchesStringFilter(
+      filterState.roles,
+      student.primary_role || student.role
+    )
+  ) {
+    return false;
+  }
+  if (
+    !matchesMultiValueFilter(
+      filterState.skills,
+      parseCSV(student.primary_skills)
+    )
+  ) {
+    return false;
+  }
+  const certificationSources = parseCSV(
+    student.certifications ||
+      student.certs ||
+      student.certifications_list ||
+      student.additional_certifications
+  );
+  if (!matchesMultiValueFilter(filterState.certs, certificationSources)) {
+    return false;
+  }
+  if (!matchesNoticeFilter(student, filterState.notice)) return false;
+  if (
+    !matchesMultiValueFilter(
+      filterState.locations,
+      parseCSV(student.preferred_location)
+    )
+  ) {
+    return false;
+  }
+  if (!matchesWorkModeFilter(student, filterState.workModes)) return false;
+  if (!matchesTopCandidateFilter(student, filterState.topCandidate)) {
+    return false;
+  }
+  return true;
+};
+
 export default function RecruiterDashboard() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -148,6 +280,7 @@ export default function RecruiterDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState(() => getInitialFilters());
   const [selectedCandidates, setSelectedCandidates] = useState(new Set());
+  const [cartCandidates, setCartCandidates] = useState(new Set());
   const [activeCandidate, setActiveCandidate] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [isSharedView, setIsSharedView] = useState(false);
@@ -155,28 +288,21 @@ export default function RecruiterDashboard() {
   const [interestSubmitting, setInterestSubmitting] = useState(false);
   const [interestSuccess, setInterestSuccess] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [showSelectionSummary, setShowSelectionSummary] = useState(false);
+  const [currentMonthLabel, setCurrentMonthLabel] = useState(() =>
+    formatMonthYear()
+  );
+  const [heroCollapsed, setHeroCollapsed] = useState(false);
+  const [pendingScroll, setPendingScroll] = useState(false);
+  const [showTopCollections, setShowTopCollections] = useState(false);
+  const selectedCount = selectedCandidates.size;
+  const cartCount = cartCandidates.size;
   const detailsRef = useRef(null);
   const candidateColumnRef = useRef(null);
-  const heroRef = useRef(null);
-  const [headerHidden, setHeaderHidden] = useState(false);
-  const [heroHeight, setHeroHeight] = useState(0);
-  const collapseOffset = heroHeight ? heroHeight + 24 : 160;
-
-  useLayoutEffect(() => {
-    if (headerHidden) return undefined;
-
-    const updateHeroHeight = () => {
-      if (!heroRef.current) return;
-      const next = heroRef.current.offsetHeight;
-      if (next > 0) {
-        setHeroHeight(next);
-      }
-    };
-
-    updateHeroHeight();
-    window.addEventListener("resize", updateHeroHeight);
-    return () => window.removeEventListener("resize", updateHeroHeight);
-  }, [headerHidden]);
+  const talentSectionRef = useRef(null);
+  const inlineFiltersRef = useRef(null);
+  const closeCart = useCallback(() => setShowCart(false), []);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -198,14 +324,40 @@ export default function RecruiterDashboard() {
   }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    if (typeof document === "undefined") return;
+    const timer = setTimeout(() => {
+      globalThis.TallyConfig = TALLY_CONFIG;
+      const existingScript = document.getElementById("tally-embed-script");
+      if (existingScript) return;
+      const script = document.createElement("script");
+      script.id = "tally-embed-script";
+      script.src = "https://tally.so/widgets/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }, 180000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(globalThis.location?.search ?? "");
     const selectedParam = params.get("selected");
     if (selectedParam) {
       const ids = selectedParam.split(",").filter(Boolean);
       if (ids.length) {
         setSelectedCandidates(new Set(ids));
+        setCartCandidates(new Set(ids));
         setIsSharedView(true);
+        setHeroCollapsed(true);
+        setPendingScroll(true);
+        setShowTopCollections(false);
       }
+    }
+
+    const topCollectionsParam = params.get("topcandidates");
+    if (topCollectionsParam) {
+      setShowTopCollections(true);
+      setHeroCollapsed(true);
+      setPendingScroll(true);
     }
   }, []);
 
@@ -215,6 +367,13 @@ export default function RecruiterDashboard() {
       setFormData(REQUEST_FORM_INITIAL);
     }
   }, [showRequestModal]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrentMonthLabel(formatMonthYear());
+    }, 1000 * 60 * 30);
+    return () => clearInterval(id);
+  }, []);
 
   const closeDetails = useCallback(() => {
     setShowDetails(false);
@@ -232,11 +391,20 @@ export default function RecruiterDashboard() {
         setShowRequestModal(false);
       } else if (showDetails) {
         closeDetails();
+      } else if (showCart) {
+        closeCart();
       }
     };
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [resumeModal, showRequestModal, showDetails, closeDetails]);
+    globalThis.addEventListener?.("keydown", handleEscape);
+    return () => globalThis.removeEventListener?.("keydown", handleEscape);
+  }, [
+    resumeModal,
+    showRequestModal,
+    showDetails,
+    showCart,
+    closeDetails,
+    closeCart,
+  ]);
 
   useEffect(() => {
     if (!showDetails) return;
@@ -261,56 +429,125 @@ export default function RecruiterDashboard() {
   };
 
   const clearSelections = () => {
-    if (selectedCandidates.size === 0) return;
+    if (selectedCount === 0) return;
     setSelectedCandidates(new Set());
     if (isSharedView) {
       setIsSharedView(false);
     }
+    setShowSelectionSummary(false);
     toast.info("Selection cleared.");
   };
 
-  const buildShareUrl = useCallback(() => {
-    if (selectedCandidates.size === 0) return null;
-    const path = window.location.pathname || "/";
-    const baseUrl = SHARE_BASE_URL ?? window.location.origin;
-    return `${baseUrl.replace(/\/$/, "")}${path}?selected=${Array.from(
-      selectedCandidates
-    ).join(",")}`;
-  }, [selectedCandidates]);
-
-  const copyShareUrl = () => {
-    const shareUrl = buildShareUrl();
-    if (!shareUrl) {
-      toast.info("Select candidates to create a shareable list.");
+  const addSelectionToCart = useCallback(() => {
+    if (selectedCount === 0) {
+      toast.info("Select candidates before adding to cart.");
       return;
     }
-    if (navigator?.clipboard?.writeText) {
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => toast.success("Share URL copied to clipboard"))
-        .catch(() => toast.error("Unable to copy share link"));
-    } else {
-      window.prompt("Copy this share link", shareUrl);
-    }
-  };
+    const idsToAdd = Array.from(selectedCandidates).map(String);
+    setCartCandidates((prev) => {
+      const next = new Set(prev);
+      idsToAdd.forEach((id) => next.add(id));
+      return next;
+    });
+    setSelectedCandidates(new Set());
+    setShowSelectionSummary(false);
+    toast.success(
+      `${idsToAdd.length} candidate${
+        idsToAdd.length > 1 ? "s" : ""
+      } added to cart.`
+    );
+  }, [selectedCandidates, selectedCount]);
 
-  const shareOnWhatsApp = () => {
-    const shareUrl = buildShareUrl();
-    if (!shareUrl) {
-      toast.info("Select candidates to share via WhatsApp.");
-      return;
-    }
-    const message = encodeURIComponent(
-      `Hi team,
+  const removeFromCart = useCallback((id) => {
+    setCartCandidates((prev) => {
+      const next = new Set(prev);
+      next.delete(String(id));
+      return next;
+    });
+  }, []);
+
+  const clearCart = useCallback(() => {
+    if (cartCount === 0) return;
+    setCartCandidates(new Set());
+    toast.info("Cart cleared.");
+  }, [cartCount]);
+
+  const buildShareUrl = useCallback(
+    (sourceSet) => {
+      const targetSet = sourceSet ?? selectedCandidates;
+      const ids = Array.from(targetSet ?? []);
+      if (ids.length === 0) return null;
+      const path = globalThis.location?.pathname ?? "/";
+      const originFallback = globalThis.location?.origin ?? "";
+      const baseUrl = (SHARE_BASE_URL || originFallback).replace(/\/$/, "");
+      return `${baseUrl}${path}?selected=${ids.join(",")}`;
+    },
+    [selectedCandidates]
+  );
+
+  const copyShareUrlForSet = useCallback(
+    (sourceSet, emptyMessage) => {
+      const shareUrl = buildShareUrl(sourceSet);
+      if (!shareUrl) {
+        toast.info(emptyMessage);
+        return;
+      }
+      if (navigator?.clipboard?.writeText) {
+        navigator.clipboard
+          .writeText(shareUrl)
+          .then(() => toast.success("Share URL copied to clipboard"))
+          .catch(() => toast.error("Unable to copy share link"));
+      } else {
+        globalThis.prompt?.("Copy this share link", shareUrl);
+      }
+    },
+    [buildShareUrl]
+  );
+
+  const shareOnWhatsAppForSet = useCallback(
+    (sourceSet, emptyMessage) => {
+      const shareUrl = buildShareUrl(sourceSet);
+      if (!shareUrl) {
+        toast.info(emptyMessage);
+        return;
+      }
+      const message = encodeURIComponent(
+        `Hi team,
 
 Check out these shortlisted MicroDegree candidates:
 ${shareUrl}
 
 Thanks!`
-    );
-    const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP_NUMBER}?text=${message}`;
-    window.open(whatsappUrl, "_blank", "noopener");
-  };
+      );
+      const whatsappUrl = `https://wa.me/${COMPANY_WHATSAPP_NUMBER}?text=${message}`;
+      globalThis.open?.(whatsappUrl, "_blank", "noopener");
+    },
+    [buildShareUrl]
+  );
+
+  const copySelectionShareUrl = useCallback(
+    () =>
+      copyShareUrlForSet(null, "Select candidates to create a shareable list."),
+    [copyShareUrlForSet]
+  );
+
+  const copyCartShareUrl = useCallback(
+    () =>
+      copyShareUrlForSet(
+        cartCandidates,
+        "Add candidates to cart before sharing."
+      ),
+    [cartCandidates, copyShareUrlForSet]
+  );
+
+  const shareCartOnWhatsApp = useCallback(
+    () =>
+      shareOnWhatsAppForSet(
+        cartCandidates,
+        "Add candidates to cart before sharing via WhatsApp."
+      ),
+    [cartCandidates, shareOnWhatsAppForSet]
+  );
 
   const clearAllFilters = () => {
     setFilters(getInitialFilters());
@@ -349,8 +586,7 @@ Thanks!`
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const selectedNames = students
-      .filter((student) => selectedCandidates.has(String(student.id)))
+    const selectedNames = cartStudentList
       .map((student) => student.full_name)
       .filter(Boolean);
     const payload = {
@@ -375,8 +611,8 @@ Thanks!`
   };
 
   const handleRequestProfilesClick = () => {
-    if (selectedCandidates.size === 0) {
-      toast.info("Select at least one candidate before requesting profiles.");
+    if (cartCount === 0) {
+      toast.info("Add candidates to the cart before requesting profiles.");
       return;
     }
     setShowRequestModal(true);
@@ -384,98 +620,87 @@ Thanks!`
 
   const filteredStudents = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-
-    const filterBySetIncludes = (set, valueList) => {
-      if (set.size === 0) return true;
-      if (!valueList || valueList.length === 0) return false;
-      const lowered = valueList.map((val) => val.toLowerCase());
-      return Array.from(set).every((entry) =>
-        lowered.includes(entry.toLowerCase())
-      );
-    };
-
-    const filterByStringSet = (set, value) => {
-      if (set.size === 0) return true;
-      const normalized = (value || "").toLowerCase();
-      if (!normalized) return false;
-      return Array.from(set).some((entry) =>
-        normalized.includes(entry.toLowerCase())
-      );
-    };
-
-    const list = students.filter((student) => {
-      if (query) {
-        const searchHaystack = [
-          student.full_name,
-          student.primary_skills,
-          student.preferred_location,
-          student.primary_role,
-          student.role,
-          student.candidate_tag,
-        ]
-          .filter(Boolean)
-          .map((value) => String(value).toLowerCase());
-        if (!searchHaystack.some((value) => value.includes(query))) {
-          return false;
-        }
-      }
-
-      if (filters.experience.size > 0) {
-        const bucket = getExperienceBucket(student.experience);
-        if (!bucket || !filters.experience.has(bucket)) return false;
-      }
-
-      if (
-        !filterByStringSet(filters.roles, student.primary_role || student.role)
-      )
-        return false;
-
-      const skillList = parseCSV(student.primary_skills);
-      if (!filterBySetIncludes(filters.skills, skillList)) return false;
-
-      const certList = parseCSV(
-        student.certifications ||
-          student.certs ||
-          student.certifications_list ||
-          student.additional_certifications
-      );
-      if (!filterBySetIncludes(filters.certs, certList)) return false;
-
-      if (filters.notice.size) {
-        const noticeBucket = getNoticeBucket(student.notice_period);
-        if (!noticeBucket || !filters.notice.has(noticeBucket)) return false;
-      }
-
-      const preferredLocations = parseCSV(student.preferred_location);
-      if (!filterBySetIncludes(filters.locations, preferredLocations))
-        return false;
-
-      if (filters.workModes.size) {
-        const workModeLabel = getWorkModeLabel(student.work_mode);
-        if (!workModeLabel || !filters.workModes.has(workModeLabel))
-          return false;
-      }
-
-      if (filters.topCandidate) {
-        const isTopCandidate =
-          String(student.top_candidates || "")
-            .trim()
-            .toLowerCase() === "yes";
-        if (!isTopCandidate) return false;
-      }
-
-      return true;
-    });
-
-    return list;
+    return students.filter(
+      (student) =>
+        matchesSearchQuery(student, query) &&
+        matchesAllFilters(student, filters)
+    );
   }, [students, searchQuery, filters]);
 
+  const curatedStudents = useMemo(() => {
+    if (!showTopCollections) return filteredStudents;
+    const idSet = new Set(TOP_COLLECTION_IDS);
+    return filteredStudents.filter((student) => idSet.has(String(student.id)));
+  }, [filteredStudents, showTopCollections]);
+
   const displayedStudents = useMemo(() => {
-    if (!isSharedView) return filteredStudents;
-    return filteredStudents.filter((student) =>
-      selectedCandidates.has(String(student.id))
-    );
-  }, [filteredStudents, isSharedView, selectedCandidates]);
+    if (isSharedView) {
+      return curatedStudents.filter((student) =>
+        selectedCandidates.has(String(student.id))
+      );
+    }
+    return curatedStudents;
+  }, [curatedStudents, isSharedView, selectedCandidates]);
+
+  const cartStudentList = useMemo(
+    () => students.filter((student) => cartCandidates.has(String(student.id))),
+    [students, cartCandidates]
+  );
+
+  useEffect(() => {
+    if (showCart && cartStudentList.length === 0) {
+      setShowCart(false);
+    }
+  }, [showCart, cartStudentList.length]);
+
+  useEffect(() => {
+    if (showCart) {
+      setShowSelectionSummary(false);
+      return;
+    }
+    if (selectedCount === 0) {
+      setShowSelectionSummary(false);
+      return;
+    }
+    setShowSelectionSummary(true);
+  }, [selectedCount, showCart]);
+
+  useEffect(() => {
+    if (!pendingScroll || !heroCollapsed) return;
+    const timer = setTimeout(() => {
+      const isMobile = (globalThis.innerWidth ?? 0) < 992;
+      if (isMobile && inlineFiltersRef.current) {
+        inlineFiltersRef.current.scrollIntoView({ behavior: "smooth" });
+      } else if (talentSectionRef.current) {
+        talentSectionRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+      setPendingScroll(false);
+    }, 140);
+    return () => clearTimeout(timer);
+  }, [pendingScroll, heroCollapsed]);
+
+  const handleBrowseNav = useCallback(() => {
+    setIsSharedView(false);
+    setShowTopCollections(false);
+    setHeroCollapsed(true);
+    setPendingScroll(true);
+  }, []);
+
+  const handleCollectionsNav = useCallback(() => {
+    if (!heroCollapsed) {
+      setHeroCollapsed(true);
+    }
+    setShowTopCollections(true);
+    setIsSharedView(false);
+    setPendingScroll(true);
+  }, [heroCollapsed]);
+  const handleCartNav = useCallback(() => {
+    if (cartStudentList.length === 0) {
+      toast.info("Your cart is empty.");
+      return;
+    }
+    setShowCart(true);
+  }, [cartStudentList.length]);
 
   const handleRowClick = (student, event) => {
     if (
@@ -489,7 +714,7 @@ Thanks!`
   };
 
   const formatExperience = (value) => {
-    const num = parseFloat(value);
+    const num = Number.parseFloat(value);
     if (Number.isNaN(num) || num === 0) return "Fresher";
     return `${num} yrs`;
   };
@@ -506,534 +731,642 @@ Thanks!`
   const formatWorkMode = (value) => getWorkModeLabel(value) || "Flexible";
 
   useEffect(() => {
-    const columnEl = candidateColumnRef.current;
-    if (!columnEl) return undefined;
-
-    const lastScrollTopRef = { current: columnEl.scrollTop };
-
-    const handleColumnScroll = () => {
-      const { scrollTop } = columnEl;
-      const nearTop = scrollTop <= 24;
-      if (nearTop) {
-        setHeaderHidden(false);
-        lastScrollTopRef.current = scrollTop;
-        return;
-      }
-
-      const scrollingDown = scrollTop > lastScrollTopRef.current + 6;
-      const scrollingUp = scrollTop < lastScrollTopRef.current - 6;
-
-      if (scrollingDown) {
-        setHeaderHidden(true);
-      } else if (scrollingUp) {
-        setHeaderHidden(false);
-      }
-
-      lastScrollTopRef.current = scrollTop;
-    };
-
-    columnEl.addEventListener("scroll", handleColumnScroll, { passive: true });
-    return () => columnEl.removeEventListener("scroll", handleColumnScroll);
-  }, []);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const handleWindowScroll = () => {
-      if (window.innerWidth >= 992) return;
-      const currentY = window.scrollY;
-      const nearTop = currentY <= 24;
-      if (nearTop) {
-        setHeaderHidden(false);
-        lastScrollY = currentY;
-        return;
-      }
-
-      if (currentY > lastScrollY + 6) {
-        setHeaderHidden(true);
-      } else if (currentY < lastScrollY - 6) {
-        setHeaderHidden(false);
-      }
-
-      lastScrollY = currentY;
-    };
-
-    window.addEventListener("scroll", handleWindowScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleWindowScroll);
-  }, []);
-
-  useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 992) {
+      if ((globalThis.innerWidth ?? 0) >= 992) {
         setMobileMenuOpen(false);
       }
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    globalThis.addEventListener?.("resize", handleResize);
+    return () => globalThis.removeEventListener?.("resize", handleResize);
   }, []);
 
   return (
-    <div
-      className="recruiter-dashboard container-fluid"
-      style={{
-        paddingTop: headerHidden ? 0 : "0.5rem",
-        paddingBottom: headerHidden ? 0 : "1rem",
-      }}
-    >
-      <ToastContainer position="top-right" />
-      <div
-        ref={heroRef}
-        style={{
-          height: headerHidden ? 0 : heroHeight || "auto",
-          overflow: "hidden",
-          transition: "height 0.45s ease",
-        }}
-      >
-        <RecruiterHero
-          headerHidden={headerHidden}
-          collapseOffset={collapseOffset}
+    <>
+      <div className="recruiter-dashboard container-fluid pb-4">
+        <ToastContainer position="top-right" />
+        <RecruiterNavbar
+          selectedCount={cartCount}
+          showSearch={heroCollapsed}
+          collectionsCount={0}
+          onBrowse={handleBrowseNav}
+          onCollections={handleCollectionsNav}
+          onCart={handleCartNav}
+          onFiltersToggle={() => setMobileMenuOpen(true)}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
         />
-      </div>
 
-      <motion.div
-        className="row g-4"
-        style={{
-          minHeight: headerHidden ? "100vh" : "auto",
-          paddingTop: headerHidden ? "0" : "0.5rem",
-          paddingBottom: headerHidden ? "0" : "0.5rem",
-          "--bs-gutter-y": "1rem",
-        }}
-        transition={{ duration: 0.35 }}
-      >
-        <div className="col-12 col-lg-3 d-none d-lg-block">
-          <div className="sidebar-stack">
-            <SearchPanel
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              isSharedView={isSharedView}
-              displayedCount={displayedStudents.length}
-              filteredCount={filteredStudents.length}
-              setIsSharedView={setIsSharedView}
-              copyShareUrl={copyShareUrl}
-              onRequestProfiles={handleRequestProfilesClick}
-              selectedCount={selectedCandidates.size}
-              onClearSelections={clearSelections}
-              shareOnWhatsApp={shareOnWhatsApp}
-            />
+        {!heroCollapsed && (
+          <section className="recruiter-hero-card" aria-live="polite">
+            <div className="hero-content">
+              <p className="hero-kicker">Talent Spotlight</p>
+              <h1 className="hero-title">
+                Top Cloud & DevOps Profiles {currentMonthLabel}
+              </h1>
+              <p className="hero-subtitle">
+                Curated engineers, architects, and SREs vetted by MicroDegree
+                for rapid hiring cycles.
+              </p>
+              <div className="hero-cta-stack">
+                <button
+                  type="button"
+                  className="hero-browse-btn"
+                  onClick={handleBrowseNav}
+                >
+                  Browse MicroDegree Talent
+                </button>
+                <p className="hero-cta-note">
+                  Click Browse to jump straight into MicroDegree's talent bench
+                  and fast-track your shortlist.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
 
+        {heroCollapsed && (
+          <div
+            className="filters-inline-wrapper d-lg-none"
+            ref={inlineFiltersRef}
+            style={{ scrollMarginTop: "120px" }}
+            aria-label="Filters"
+          >
             <FiltersPanel
               filters={filters}
               setFilters={setFilters}
               onClear={clearAllFilters}
             />
           </div>
-        </div>
+        )}
 
-        <motion.div
-          className="col-12 col-lg-9 candidate-column-scroll"
-          ref={candidateColumnRef}
-        >
-          <div className="d-lg-none mb-3">
-            <button
-              type="button"
-              className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <FaBars /> Filters & Search
-            </button>
-          </div>
-          <CandidateList
-            students={displayedStudents}
-            loading={loading}
-            error={error}
-            activeCandidateId={activeCandidate?.id}
-            showDetails={showDetails}
-            handleRowClick={handleRowClick}
-            toggleSelection={toggleSelection}
-            selectedCandidates={selectedCandidates}
-            formatExperience={formatExperience}
-            formatNotice={formatNotice}
-            getInitials={getInitials}
-            getRelativeDayLabel={getRelativeDayLabel}
-            toLpa={toLpa}
-            parseCSV={parseCSV}
-            formatWorkMode={formatWorkMode}
-          />
-        </motion.div>
-      </motion.div>
-
-      <AnimatePresence>
-        {mobileMenuOpen && (
+        {heroCollapsed && (
           <motion.div
-            className="mobile-filter-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            ref={talentSectionRef}
+            className="row g-4"
+            style={{ "--bs-gutter-y": "1rem", scrollMarginTop: "120px" }}
+            transition={{ duration: 0.35 }}
           >
-            <motion.div
-              className="mobile-filter-drawer"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", stiffness: 260, damping: 32 }}
-            >
-              <div className="mobile-filter-header d-flex align-items-center justify-content-between mb-3">
-                <h5 className="mb-0">Search & Filters</h5>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-light"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="mobile-filter-body">
-                <SearchPanel
-                  searchQuery={searchQuery}
-                  onSearchChange={setSearchQuery}
-                  isSharedView={isSharedView}
-                  displayedCount={displayedStudents.length}
-                  filteredCount={filteredStudents.length}
-                  setIsSharedView={setIsSharedView}
-                  copyShareUrl={copyShareUrl}
-                  onRequestProfiles={handleRequestProfilesClick}
-                  selectedCount={selectedCandidates.size}
-                  onClearSelections={clearSelections}
-                  shareOnWhatsApp={shareOnWhatsApp}
-                />
-
+            <div className="col-12 col-lg-3 d-none d-lg-block">
+              <div className="sidebar-stack">
                 <FiltersPanel
                   filters={filters}
                   setFilters={setFilters}
                   onClear={clearAllFilters}
                 />
               </div>
+            </div>
+
+            <motion.div
+              className="col-12 col-lg-9 candidate-column-scroll"
+              ref={candidateColumnRef}
+            >
+              <div className="d-lg-none mb-3">
+                <button
+                  type="button"
+                  className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                  onClick={() => setMobileMenuOpen(true)}
+                >
+                  <FaBars /> Filters & Search
+                </button>
+              </div>
+              <CandidateList
+                students={displayedStudents}
+                loading={loading}
+                error={error}
+                activeCandidateId={activeCandidate?.id}
+                showDetails={showDetails}
+                handleRowClick={handleRowClick}
+                toggleSelection={toggleSelection}
+                selectedCandidates={selectedCandidates}
+                formatExperience={formatExperience}
+                formatNotice={formatNotice}
+                getInitials={getInitials}
+                getRelativeDayLabel={getRelativeDayLabel}
+                toLpa={toLpa}
+                parseCSV={parseCSV}
+                formatWorkMode={formatWorkMode}
+              />
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
 
-      <FAQSection />
-
-      <AnimatePresence>
-        {resumeModal && (
-          <motion.div
-            className="modal-backdrop-custom"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="modal-content-custom">
-              <button
-                className="btn btn-sm btn-light position-absolute top-0 end-0 m-2"
-                onClick={() => setResumeModal(null)}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              className="mobile-filter-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="mobile-filter-drawer"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 260, damping: 32 }}
               >
-                ✕
-              </button>
-              <iframe
-                title="Resume"
-                src={resumeModal}
-                style={{ width: "100%", height: "80vh", border: "none" }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <div className="mobile-filter-header d-flex align-items-center justify-content-between mb-3">
+                  <h5 className="mb-0">Search & Filters</h5>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-light"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="mobile-filter-body">
+                  <FiltersPanel
+                    filters={filters}
+                    setFilters={setFilters}
+                    onClear={clearAllFilters}
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <AnimatePresence>
-        {showRequestModal && (
-          <motion.div
-            className="modal-backdrop-custom"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="modal-content-custom p-4" style={{ maxWidth: 600 }}>
-              <button
-                className="btn btn-sm btn-light position-absolute top-0 end-0 m-2"
-                onClick={() => setShowRequestModal(false)}
+        <AnimatePresence>
+          {showCart && cartStudentList.length > 0 && (
+            <motion.div
+              className="modal-backdrop-custom"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeCart}
+            >
+              <motion.div
+                className="cart-panel"
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.92, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 24 }}
+                onClick={(event) => event.stopPropagation()}
               >
-                ✕
-              </button>
-              <h5 className="fw-bold mb-3">Request Candidate Profiles</h5>
-              {!formSubmitted ? (
-                <form onSubmit={handleSubmit}>
-                  {[
-                    { name: "fullName", label: "Full Name" },
-                    { name: "email", label: "Email" },
-                    { name: "contact", label: "Contact Number" },
-                    { name: "company", label: "Company Name" },
-                  ].map((field) => (
-                    <div className="mb-3" key={field.name}>
-                      <label className="form-label">{field.label}</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder={`Enter ${field.label}`}
-                        required
-                        value={formData[field.name]}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            [field.name]: e.target.value,
-                          })
-                        }
-                      />
+                <div className="cart-panel-header">
+                  <div>
+                    <h5 className="fw-bold mb-1">Selected Candidates</h5>
+                    <p className="mb-0 text-muted small">
+                      {cartStudentList.length} profile
+                      {cartStudentList.length > 1 ? "s" : ""} ready for review
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-light"
+                    onClick={closeCart}
+                    aria-label="Close cart"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="cart-panel-body">
+                  {cartStudentList.map((student) => (
+                    <div className="cart-item" key={student.id}>
+                      <div>
+                        <h6 className="fw-semibold mb-1">
+                          {student.full_name || "Candidate"}
+                        </h6>
+                        <div className="cart-item-meta">
+                          <span>{student.primary_role || student.role}</span>
+                          <span>{formatExperience(student.experience)}</span>
+                          <span>
+                            {formatWorkMode(student.work_mode)} ·{" "}
+                            {student.preferred_location || "Flexible"}
+                          </span>
+                          <span>{getRelativeDayLabel(student.updated_at)}</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => removeFromCart(student.id)}
+                      >
+                        Remove
+                      </button>
                     </div>
                   ))}
-                  <div className="d-flex justify-content-between mt-4">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => setShowRequestModal(false)}
-                    >
-                      Back
-                    </button>
-                    <button type="submit" className="btn btn-primary">
-                      Submit →
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <motion.div
-                  className="text-center p-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div
-                    className="d-flex justify-content-center align-items-center mb-3"
-                    style={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: "50%",
-                      background: "linear-gradient(90deg, #00c6ff, #007bff)",
-                      margin: "0 auto",
-                    }}
-                  >
-                    <FaCheckCircle size={40} color="white" />
-                  </div>
-                  <h5 className="fw-bold mt-3 text-success">
-                    Thank you for your request!
-                  </h5>
-                  <p className="text-muted small">
-                    Our placement team will connect shortly with tailored
-                    profiles.
-                  </p>
-                  <button
-                    className="btn btn-primary mt-3"
-                    style={{
-                      background: "linear-gradient(90deg, #007bff, #00c6ff)",
-                      border: "none",
-                    }}
-                    onClick={() => setShowRequestModal(false)}
-                  >
-                    Close
-                  </button>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showDetails && activeCandidate && (
-          <motion.div
-            className="candidate-context-overlay"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="candidate-popover-title"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ pointerEvents: "none" }}
-          >
-            <motion.div
-              className="candidate-popover"
-              ref={detailsRef}
-              initial={{ x: 40, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 40, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 320, damping: 28 }}
-              style={{ pointerEvents: "auto" }}
-            >
-              <header>
-                <div>
-                  <h5 id="candidate-popover-title" className="mb-1 fw-bold">
-                    {activeCandidate.full_name}
-                  </h5>
-                  <div className="small">
-                    {activeCandidate.primary_role ||
-                      activeCandidate.role ||
-                      "Candidate"}
-                  </div>
                 </div>
+
+                <div className="cart-panel-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      closeCart();
+                      handleRequestProfilesClick();
+                    }}
+                  >
+                    Request Profiles
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={copyCartShareUrl}
+                  >
+                    Copy Share Link
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-success"
+                    onClick={shareCartOnWhatsApp}
+                  >
+                    Share on WhatsApp
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-link text-danger px-0"
+                    onClick={() => {
+                      clearCart();
+                      closeCart();
+                    }}
+                  >
+                    Clear All
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {resumeModal && (
+            <motion.div
+              className="modal-backdrop-custom"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="modal-content-custom">
                 <button
-                  type="button"
-                  className="btn btn-light btn-sm"
-                  onClick={closeDetails}
-                  aria-label="Close candidate details"
+                  className="btn btn-sm btn-light position-absolute top-0 end-0 m-2"
+                  onClick={() => setResumeModal(null)}
                 >
                   ✕
                 </button>
-              </header>
-              <div className="popover-body">
-                <div className="row g-3 mb-3">
-                  <div className="col-6">
-                    <strong>Experience:</strong>
-                    <div>{formatExperience(activeCandidate.experience)}</div>
-                  </div>
-                  <div className="col-6">
-                    <strong>Notice:</strong>
-                    <div>{formatNotice(activeCandidate.notice_period)}</div>
-                  </div>
-                  <div className="col-6">
-                    <strong>Current CTC:</strong>
-                    <div>
-                      {toLpa(activeCandidate.current_ctc).toFixed(1)} LPA
-                    </div>
-                  </div>
-                  <div className="col-6">
-                    <strong>Expected CTC:</strong>
-                    <div>
-                      {toLpa(activeCandidate.expected_ctc).toFixed(1)} LPA
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <strong>Preferred Location:</strong>
-                    <div>{activeCandidate.preferred_location || "—"}</div>
-                  </div>
-                  <div className="col-12">
-                    <strong>Work Mode:</strong>
-                    <div>{formatWorkMode(activeCandidate.work_mode)}</div>
-                  </div>
-                  <div className="col-12">
-                    <strong>Skills:</strong>
-                    <div className="mt-1 skill-badges">
-                      {parseCSV(activeCandidate.primary_skills).length
-                        ? parseCSV(activeCandidate.primary_skills).map(
-                            (skill, index) => (
-                              <span key={`detail-skill-${index}`}>
-                                <SkillBadge skill={skill} />
-                              </span>
-                            )
-                          )
-                        : "—"}
-                    </div>
-                  </div>
-                </div>
+                <iframe
+                  title="Resume"
+                  src={resumeModal}
+                  style={{ width: "100%", height: "80vh", border: "none" }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                {activeCandidate.resume_url && (
-                  <div className="d-flex gap-2 flex-wrap mb-3">
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => setResumeModal(activeCandidate.resume_url)}
-                    >
-                      View Resume
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-success"
-                      onClick={() => toggleSelection(activeCandidate.id)}
-                    >
-                      {selectedCandidates.has(String(activeCandidate.id))
-                        ? "Unselect"
-                        : "Select"}
-                    </button>
-                  </div>
-                )}
-
-                <h6 className="fw-bold">Mark Interest</h6>
-                {!interestSuccess ? (
-                  <form
-                    onSubmit={submitInterest}
-                    className="interest-form"
-                    aria-label="Interest form"
-                  >
-                    <div className="row g-2">
-                      <div className="col-12">
+        <AnimatePresence>
+          {showRequestModal && (
+            <motion.div
+              className="modal-backdrop-custom"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div
+                className="modal-content-custom p-4"
+                style={{ maxWidth: 600 }}
+              >
+                <button
+                  className="btn btn-sm btn-light position-absolute top-0 end-0 m-2"
+                  onClick={() => setShowRequestModal(false)}
+                >
+                  ✕
+                </button>
+                <h5 className="fw-bold mb-3">Request Candidate Profiles</h5>
+                {!formSubmitted ? (
+                  <form onSubmit={handleSubmit}>
+                    {[
+                      { name: "fullName", label: "Full Name" },
+                      { name: "email", label: "Email" },
+                      { name: "contact", label: "Contact Number" },
+                      { name: "company", label: "Company Name" },
+                    ].map((field) => (
+                      <div className="mb-3" key={field.name}>
+                        <label className="form-label">{field.label}</label>
                         <input
                           type="text"
-                          className="form-control form-control-sm"
-                          placeholder="Your Name"
-                          value={interestForm.recruiterName}
+                          className="form-control"
+                          placeholder={`Enter ${field.label}`}
+                          required
+                          value={formData[field.name]}
                           onChange={(e) =>
-                            setInterestForm({
-                              ...interestForm,
-                              recruiterName: e.target.value,
+                            setFormData({
+                              ...formData,
+                              [field.name]: e.target.value,
                             })
                           }
-                          required
                         />
                       </div>
-                      <div className="col-12">
-                        <input
-                          type="email"
-                          className="form-control form-control-sm"
-                          placeholder="Your Email"
-                          value={interestForm.recruiterEmail}
-                          onChange={(e) =>
-                            setInterestForm({
-                              ...interestForm,
-                              recruiterEmail: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="col-12">
-                        <input
-                          type="tel"
-                          className="form-control form-control-sm"
-                          placeholder="Phone Number"
-                          value={interestForm.recruiterPhone}
-                          onChange={(e) =>
-                            setInterestForm({
-                              ...interestForm,
-                              recruiterPhone: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="col-12">
-                        <input
-                          type="text"
-                          className="form-control form-control-sm"
-                          placeholder="Company Name"
-                          value={interestForm.recruiterCompany}
-                          onChange={(e) =>
-                            setInterestForm({
-                              ...interestForm,
-                              recruiterCompany: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-sm btn-primary w-100 mt-3"
-                      disabled={interestSubmitting}
-                    >
-                      {interestSubmitting ? "Submitting..." : "Submit Interest"}
-                    </button>
-                    <div className="small text-muted mt-2">
-                      (Email notifications will be sent when SMTP is
-                      configured.)
+                    ))}
+                    <div className="d-flex justify-content-between mt-4">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setShowRequestModal(false)}
+                      >
+                        Back
+                      </button>
+                      <button type="submit" className="btn btn-primary">
+                        Submit →
+                      </button>
                     </div>
                   </form>
                 ) : (
-                  <div className="alert alert-success py-2 px-3 d-flex align-items-center gap-2 mt-2">
-                    <FaUserCheck /> Interest recorded.
-                  </div>
+                  <motion.div
+                    className="text-center p-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div
+                      className="d-flex justify-content-center align-items-center mb-3"
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: "50%",
+                        background: "linear-gradient(90deg, #00c6ff, #007bff)",
+                        margin: "0 auto",
+                      }}
+                    >
+                      <FaCheckCircle size={40} color="white" />
+                    </div>
+                    <h5 className="fw-bold mt-3 text-success">
+                      Thank you for your request!
+                    </h5>
+                    <p className="text-muted small">
+                      Our placement team will connect shortly with tailored
+                      profiles.
+                    </p>
+                    <button
+                      className="btn btn-primary mt-3"
+                      style={{
+                        background: "linear-gradient(90deg, #007bff, #00c6ff)",
+                        border: "none",
+                      }}
+                      onClick={() => setShowRequestModal(false)}
+                    >
+                      Close
+                    </button>
+                  </motion.div>
                 )}
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showDetails && activeCandidate && (
+            <MotionDialog
+              className="candidate-context-overlay"
+              aria-modal="true"
+              aria-labelledby="candidate-popover-title"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              open
+              style={{ pointerEvents: "none" }}
+            >
+              <motion.div
+                className="candidate-popover"
+                ref={detailsRef}
+                initial={{ x: 40, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 40, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                style={{ pointerEvents: "auto" }}
+              >
+                <header>
+                  <div>
+                    <h5 id="candidate-popover-title" className="mb-1 fw-bold">
+                      {activeCandidate.full_name}
+                    </h5>
+                    <div className="small">
+                      {activeCandidate.primary_role ||
+                        activeCandidate.role ||
+                        "Candidate"}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-light btn-sm"
+                    onClick={closeDetails}
+                    aria-label="Close candidate details"
+                  >
+                    ✕
+                  </button>
+                </header>
+                <div className="popover-body">
+                  <div className="row g-3 mb-3">
+                    <div className="col-6">
+                      <strong>Experience:</strong>
+                      <div>{formatExperience(activeCandidate.experience)}</div>
+                    </div>
+                    <div className="col-6">
+                      <strong>Notice:</strong>
+                      <div>{formatNotice(activeCandidate.notice_period)}</div>
+                    </div>
+                    <div className="col-6">
+                      <strong>Current CTC:</strong>
+                      <div>
+                        {toLpa(activeCandidate.current_ctc).toFixed(1)} LPA
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <strong>Expected CTC:</strong>
+                      <div>
+                        {toLpa(activeCandidate.expected_ctc).toFixed(1)} LPA
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <strong>Preferred Location:</strong>
+                      <div>{activeCandidate.preferred_location || "—"}</div>
+                    </div>
+                    <div className="col-12">
+                      <strong>Work Mode:</strong>
+                      <div>{formatWorkMode(activeCandidate.work_mode)}</div>
+                    </div>
+                    <div className="col-12">
+                      <strong>Skills:</strong>
+                      <div className="mt-1 skill-badges">
+                        {parseCSV(activeCandidate.primary_skills).length
+                          ? parseCSV(activeCandidate.primary_skills).map(
+                              (skill, index) => (
+                                <span
+                                  key={`${activeCandidate.id}-${skill}-${index}`}
+                                >
+                                  <SkillBadge skill={skill} />
+                                </span>
+                              )
+                            )
+                          : "—"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {activeCandidate.resume_url && (
+                    <div className="d-flex gap-2 flex-wrap mb-3">
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() =>
+                          setResumeModal(activeCandidate.resume_url)
+                        }
+                      >
+                        View Resume
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-success"
+                        onClick={() => toggleSelection(activeCandidate.id)}
+                      >
+                        {selectedCandidates.has(String(activeCandidate.id))
+                          ? "Unselect"
+                          : "Select"}
+                      </button>
+                    </div>
+                  )}
+
+                  <h6 className="fw-bold">Mark Interest</h6>
+                  {interestSuccess ? (
+                    <div className="alert alert-success py-2 px-3 d-flex align-items-center gap-2 mt-2">
+                      <FaUserCheck /> Interest recorded.
+                    </div>
+                  ) : (
+                    <form
+                      onSubmit={submitInterest}
+                      className="interest-form"
+                      aria-label="Interest form"
+                    >
+                      <div className="row g-2">
+                        <div className="col-12">
+                          <input
+                            type="text"
+                            className="form-control form-control-sm"
+                            placeholder="Your Name"
+                            value={interestForm.recruiterName}
+                            onChange={(e) =>
+                              setInterestForm({
+                                ...interestForm,
+                                recruiterName: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div className="col-12">
+                          <input
+                            type="email"
+                            className="form-control form-control-sm"
+                            placeholder="Your Email"
+                            value={interestForm.recruiterEmail}
+                            onChange={(e) =>
+                              setInterestForm({
+                                ...interestForm,
+                                recruiterEmail: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div className="col-12">
+                          <input
+                            type="tel"
+                            className="form-control form-control-sm"
+                            placeholder="Phone Number"
+                            value={interestForm.recruiterPhone}
+                            onChange={(e) =>
+                              setInterestForm({
+                                ...interestForm,
+                                recruiterPhone: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                        <div className="col-12">
+                          <input
+                            type="text"
+                            className="form-control form-control-sm"
+                            placeholder="Company Name"
+                            value={interestForm.recruiterCompany}
+                            onChange={(e) =>
+                              setInterestForm({
+                                ...interestForm,
+                                recruiterCompany: e.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="submit"
+                        className="btn btn-sm btn-primary w-100 mt-3"
+                        disabled={interestSubmitting}
+                      >
+                        {interestSubmitting
+                          ? "Submitting..."
+                          : "Submit Interest"}
+                      </button>
+                      <div className="small text-muted mt-2">
+                        (Email notifications will be sent when SMTP is
+                        configured.)
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </motion.div>
+            </MotionDialog>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showSelectionSummary && selectedCount > 0 && !showCart && (
+            <motion.div
+              className="cart-sticky-cta"
+              aria-live="polite"
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 80, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div>
+                <p className="cart-sticky-count mb-1">
+                  {selectedCount} candidate
+                  {selectedCount > 1 ? "s" : ""} selected
+                </p>
+                <p className="cart-sticky-sub text-muted mb-0">
+                  Add them to cart or share with your team
+                </p>
+              </div>
+              <div className="cart-sticky-actions">
+                <button
+                  type="button"
+                  className="btn btn-link text-decoration-none"
+                  onClick={clearSelections}
+                >
+                  Clear
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-light"
+                  onClick={copySelectionShareUrl}
+                >
+                  ↗ Share
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={addSelectionToCart}
+                >
+                  Add to cart
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <Footer />
+    </>
   );
 }

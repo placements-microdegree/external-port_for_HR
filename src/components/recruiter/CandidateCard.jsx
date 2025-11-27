@@ -17,6 +17,7 @@ export default function CandidateCard({
   formatWorkMode,
 }) {
   const locations = parseCSV(student.preferred_location);
+  const primaryLocation = locations[0] || "Remote";
   const skills = parseCSV(student.primary_skills);
   const currentCtcLpa = toLpa(student.current_ctc || 0);
   const workModeLabel = formatWorkMode(student.work_mode);
@@ -98,7 +99,7 @@ export default function CandidateCard({
               <div className="candidate-meta-inline text-muted">
                 <span>{formatExperience(student.experience)}</span>
                 <span>•</span>
-                <span>{locations[0] || "Remote"}</span>
+                <span>{primaryLocation}</span>
                 <span>•</span>
                 <span>
                   {getRelativeDayLabel(
@@ -138,9 +139,7 @@ export default function CandidateCard({
           </div>
           <div className="meta-item">
             <span className="meta-label">Preferred Location</span>
-            <span className="meta-value">
-              {locations.join(" · ") || "Remote"}
-            </span>
+            <span className="meta-value">{primaryLocation}</span>
           </div>
           <div className="meta-item">
             <span className="meta-label">Current CTC</span>
