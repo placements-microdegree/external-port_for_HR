@@ -137,7 +137,7 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
   if (filters.topCandidate) {
     activeFilterChips.push({
       key: "topCandidate",
-      label: "Top Candidates Only",
+      label: "🏅 Top Candidates Only",
       onRemove: toggleTopCandidate,
     });
   }
@@ -179,7 +179,7 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
           onClick={toggleTopCandidate}
           aria-pressed={filters.topCandidate}
         >
-          Top Candidates Only
+          🏅 Top Candidates Only
         </button>
       </section>
 

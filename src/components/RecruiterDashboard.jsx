@@ -16,6 +16,7 @@ import FiltersPanel from "./FiltersPanel";
 import CandidateList from "./recruiter/CandidateList";
 import RecruiterNavbar from "./recruiter/RecruiterNavbar";
 import Footer from "./Footer";
+import SharedSelectionBanner from "./SharedSelectionBanner";
 import { SkillBadge } from "./SkillBadgeDesign";
 import "./RecruiterDashboard.css";
 
@@ -32,12 +33,6 @@ const TALLY_CONFIG = {
     },
   },
 };
-const TOP_COLLECTION_IDS = [
-  "ad2a2cd8-13df-4ec2-abbd-01b40285f9ec",
-  "d0432983-d366-47c2-abf9-66486fa17334",
-  "ab246d5a-a040-41f8-aaeb-1d44af8bc609",
-  "9016bc23-a977-43a3-bca6-271a01a08ffd",
-];
 
 const getInitialFilters = () => ({
   experience: new Set(),
@@ -217,13 +212,18 @@ const matchesWorkModeFilter = (student, filterSet) => {
   return Boolean(workModeLabel && filterSet.has(workModeLabel));
 };
 
+const hasTopCandidateTag = (student) => {
+  const tag = String(student.candidate_tag ?? "").toLowerCase();
+  if (tag.includes("top candidate")) return true;
+  const legacyFlag = String(student.top_candidates ?? "")
+    .trim()
+    .toLowerCase();
+  return legacyFlag === "yes";
+};
+
 const matchesTopCandidateFilter = (student, requireTopCandidate) => {
   if (!requireTopCandidate) return true;
-  return (
-    String(student.top_candidates ?? "")
-      .trim()
-      .toLowerCase() === "yes"
-  );
+  return hasTopCandidateTag(student);
 };
 
 const matchesAllFilters = (student, filterState) => {
@@ -345,7 +345,7 @@ export default function RecruiterDashboard() {
       const ids = selectedParam.split(",").filter(Boolean);
       if (ids.length) {
         setSelectedCandidates(new Set(ids));
-        setCartCandidates(new Set(ids));
+        setCartCandidates(new Set());
         setIsSharedView(true);
         setHeroCollapsed(true);
         setPendingScroll(true);
@@ -629,8 +629,12 @@ Thanks!`
 
   const curatedStudents = useMemo(() => {
     if (!showTopCollections) return filteredStudents;
-    const idSet = new Set(TOP_COLLECTION_IDS);
-    return filteredStudents.filter((student) => idSet.has(String(student.id)));
+    return filteredStudents.filter(
+      (student) =>
+        String(student.top_collection ?? "")
+          .trim()
+          .toLowerCase() === "yes"
+    );
   }, [filteredStudents, showTopCollections]);
 
   const displayedStudents = useMemo(() => {
@@ -652,6 +656,13 @@ Thanks!`
       setShowCart(false);
     }
   }, [showCart, cartStudentList.length]);
+
+  useEffect(() => {
+    if (!isSharedView) return;
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  }, [isSharedView, mobileMenuOpen]);
 
   useEffect(() => {
     if (showCart) {
@@ -694,6 +705,22 @@ Thanks!`
     setIsSharedView(false);
     setPendingScroll(true);
   }, [heroCollapsed]);
+
+  const exitSharedView = useCallback(() => {
+    setIsSharedView(false);
+    setShowTopCollections(false);
+    if (!heroCollapsed) {
+      setHeroCollapsed(true);
+    }
+    setPendingScroll(true);
+  }, [heroCollapsed]);
+
+  useEffect(() => {
+    if (!isSharedView) return;
+    if (selectedCandidates.size === 0) {
+      exitSharedView();
+    }
+  }, [isSharedView, selectedCandidates, exitSharedView]);
   const handleCartNav = useCallback(() => {
     if (cartStudentList.length === 0) {
       toast.info("Your cart is empty.");
@@ -740,6 +767,10 @@ Thanks!`
     return () => globalThis.removeEventListener?.("resize", handleResize);
   }, []);
 
+  const candidateColumnClasses = isSharedView
+    ? "col-12 candidate-column-scroll"
+    : "col-12 col-lg-9 candidate-column-scroll";
+
   return (
     <>
       <div className="recruiter-dashboard container-fluid pb-4">
@@ -784,7 +815,7 @@ Thanks!`
           </section>
         )}
 
-        {heroCollapsed && (
+        {heroCollapsed && !isSharedView && (
           <div
             className="filters-inline-wrapper d-lg-none"
             ref={inlineFiltersRef}
@@ -806,29 +837,39 @@ Thanks!`
             style={{ "--bs-gutter-y": "1rem", scrollMarginTop: "120px" }}
             transition={{ duration: 0.35 }}
           >
-            <div className="col-12 col-lg-3 d-none d-lg-block">
-              <div className="sidebar-stack">
-                <FiltersPanel
-                  filters={filters}
-                  setFilters={setFilters}
-                  onClear={clearAllFilters}
-                />
+            {!isSharedView && (
+              <div className="col-12 col-lg-3 d-none d-lg-block">
+                <div className="sidebar-stack">
+                  <FiltersPanel
+                    filters={filters}
+                    setFilters={setFilters}
+                    onClear={clearAllFilters}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <motion.div
-              className="col-12 col-lg-9 candidate-column-scroll"
+              className={candidateColumnClasses}
               ref={candidateColumnRef}
             >
-              <div className="d-lg-none mb-3">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                  onClick={() => setMobileMenuOpen(true)}
-                >
-                  <FaBars /> Filters & Search
-                </button>
-              </div>
+              {isSharedView && (
+                <SharedSelectionBanner
+                  count={selectedCount}
+                  onExitSharedView={exitSharedView}
+                />
+              )}
+              {!isSharedView && (
+                <div className="d-lg-none mb-3">
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                    onClick={() => setMobileMenuOpen(true)}
+                  >
+                    <FaBars /> Filters & Search
+                  </button>
+                </div>
+              )}
               <CandidateList
                 students={displayedStudents}
                 loading={loading}
@@ -851,7 +892,7 @@ Thanks!`
         )}
 
         <AnimatePresence>
-          {mobileMenuOpen && (
+          {mobileMenuOpen && !isSharedView && (
             <motion.div
               className="mobile-filter-overlay"
               initial={{ opacity: 0 }}

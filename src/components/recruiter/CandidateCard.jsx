@@ -23,10 +23,9 @@ export default function CandidateCard({
   const workModeLabel = formatWorkMode(student.work_mode);
 
   const hasAwsBadge = true; // Requested: show AWS badge for every candidate
-  const isTopCandidate =
-    String(student.top_candidates || "")
-      .trim()
-      .toLowerCase() === "yes";
+  const isTopCandidate = String(student.candidate_tag || "")
+    .toLowerCase()
+    .includes("top candidate");
   const noticeRaw = String(student.notice_period || "").toLowerCase();
   const isImmediateJoiner =
     noticeRaw.includes("immediate") ||
