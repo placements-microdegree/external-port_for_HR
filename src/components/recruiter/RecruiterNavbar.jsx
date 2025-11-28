@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   FaBars,
   FaCompass,
-  FaFilter,
   FaLayerGroup,
   FaSearch,
   FaShoppingCart,
@@ -71,14 +70,6 @@ export default function RecruiterNavbar({
         <button type="button" className="recruiter-nav-btn" onClick={onBrowse}>
           <FaCompass aria-hidden="true" />
           <span>Browse Talent</span>
-        </button>
-        <button
-          type="button"
-          className="recruiter-nav-btn recruiter-nav-filter-btn"
-          onClick={onFiltersToggle}
-        >
-          <FaFilter aria-hidden="true" />
-          <span>Filters</span>
         </button>
         <button
           type="button"

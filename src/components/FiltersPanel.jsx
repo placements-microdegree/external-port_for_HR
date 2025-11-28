@@ -33,28 +33,33 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
     "Linux Admin",
   ];
 
-  const CORE_SKILLS = [
-    "AWS",
-    "Linux",
+  const SKILL_OPTIONS = [
+    "CI/CD",
+    "Linux and Networking",
     "Docker",
     "Kubernetes",
     "Terraform",
-    "Jenkins",
-    "Git",
-    "GitHub",
-    "Python",
-  ];
-  const SECONDARY_SKILLS = [
-    "Azure",
-    "Ansible",
-    "Prometheus",
-    "Grafana",
-    "Networking",
+    "EC2",
+    "VPC",
+    "Subnets",
+    "NAT",
+    "Security Groups",
+    "Monitoring tools: Grafana",
+    "Monitoring tools: Prometheus",
+    "Shell scripting",
+    "Lambda",
+    "IAM",
+    "Roles",
+    "Policies",
   ];
 
-  const SKILL_OPTIONS = [...CORE_SKILLS, ...SECONDARY_SKILLS];
-
-  const CERTS = ["AWS", "DevOps"];
+  const CERTS = [
+    "Azure foundations",
+    "AWS solution architect",
+    "Scrum Master",
+    "Devops Engineer",
+    "Microsoft Azure Fundamentals",
+  ];
 
   const NOTICE_OPTIONS = [
     "Immediate",
@@ -66,14 +71,15 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
 
   const LOCATIONS = [
     "Bangalore",
-    "Hyderabad",
     "Pune",
-    "Chennai",
-    "Kochi",
-    "Remote",
+    "Mumbai",
+    "Hyderabad",
+    "chennai",
+    "kolkatta",
+    "Anywhere In India",
   ];
 
-  const WORK_MODES = ["Remote", "Hybrid", "On-site"];
+  const WORK_MODES = ["Hybrid", "Office", "Remote"];
 
   const activeFilterChips = [];
 

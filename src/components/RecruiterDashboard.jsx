@@ -22,7 +22,8 @@ import "./RecruiterDashboard.css";
 
 const MotionDialog = motion.dialog;
 
-const SHARE_BASE_URL = "http://localhost:3000";
+const SHARE_BASE_URL =
+  process.env.REACT_APP_SHARE_BASE_URL || "http://localhost:3000";
 const TALLY_FORM_ID = "ob9eye";
 const TALLY_CONFIG = {
   formId: TALLY_FORM_ID,
@@ -59,7 +60,7 @@ const INTEREST_FORM_INITIAL = {
   recruiterPhone: "",
 };
 
-const COMPANY_WHATSAPP_NUMBER = "9380098592";
+const COMPANY_WHATSAPP_NUMBER = process.env.REACT_APP_COMPANY_WHATSAPP_NUMBER;
 
 const getExperienceBucket = (value) => {
   const num = Number.parseFloat(value);
@@ -137,11 +138,12 @@ const getWorkModeLabel = (value) => {
   if (normalized.includes("remote")) return "Remote";
   if (normalized.includes("hybrid")) return "Hybrid";
   if (
+    normalized.includes("office") ||
     normalized.includes("on-site") ||
     normalized.includes("onsite") ||
     normalized.includes("on site")
   ) {
-    return "On-site";
+    return "Office";
   }
   return normalized
     .split(/\s|-/)
@@ -183,6 +185,18 @@ const matchesMultiValueFilter = (filterSet, values) => {
   return Array.from(filterSet).every((entry) =>
     loweredValues.has(String(entry).toLowerCase())
   );
+};
+
+const matchesCertificationFilter = (filterSet, certifications) => {
+  if (!filterSet.size) return true;
+  if (!certifications || certifications.length === 0) return false;
+  const normalizedCerts = certifications.map((cert) =>
+    String(cert ?? "").toLowerCase()
+  );
+  return Array.from(filterSet).every((entry) => {
+    const target = String(entry ?? "").toLowerCase();
+    return normalizedCerts.some((cert) => cert.includes(target));
+  });
 };
 
 const matchesStringFilter = (filterSet, value) => {
@@ -250,7 +264,7 @@ const matchesAllFilters = (student, filterState) => {
       student.certifications_list ||
       student.additional_certifications
   );
-  if (!matchesMultiValueFilter(filterState.certs, certificationSources)) {
+  if (!matchesCertificationFilter(filterState.certs, certificationSources)) {
     return false;
   }
   if (!matchesNoticeFilter(student, filterState.notice)) return false;
@@ -301,7 +315,6 @@ export default function RecruiterDashboard() {
   const detailsRef = useRef(null);
   const candidateColumnRef = useRef(null);
   const talentSectionRef = useRef(null);
-  const inlineFiltersRef = useRef(null);
   const closeCart = useCallback(() => setShowCart(false), []);
 
   useEffect(() => {
@@ -679,10 +692,7 @@ Thanks!`
   useEffect(() => {
     if (!pendingScroll || !heroCollapsed) return;
     const timer = setTimeout(() => {
-      const isMobile = (globalThis.innerWidth ?? 0) < 992;
-      if (isMobile && inlineFiltersRef.current) {
-        inlineFiltersRef.current.scrollIntoView({ behavior: "smooth" });
-      } else if (talentSectionRef.current) {
+      if (talentSectionRef.current) {
         talentSectionRef.current.scrollIntoView({ behavior: "smooth" });
       }
       setPendingScroll(false);
@@ -813,21 +823,6 @@ Thanks!`
               </div>
             </div>
           </section>
-        )}
-
-        {heroCollapsed && !isSharedView && (
-          <div
-            className="filters-inline-wrapper d-lg-none"
-            ref={inlineFiltersRef}
-            style={{ scrollMarginTop: "120px" }}
-            aria-label="Filters"
-          >
-            <FiltersPanel
-              filters={filters}
-              setFilters={setFilters}
-              onClear={clearAllFilters}
-            />
-          </div>
         )}
 
         {heroCollapsed && (
