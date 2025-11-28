@@ -60,7 +60,8 @@ const INTEREST_FORM_INITIAL = {
   recruiterPhone: "",
 };
 
-const COMPANY_WHATSAPP_NUMBER = process.env.REACT_APP_COMPANY_WHATSAPP_NUMBER;
+const COMPANY_WHATSAPP_NUMBER =
+  process.env.REACT_APP_COMPANY_WHATSAPP_NUMBER || "6366983877";
 
 const getExperienceBucket = (value) => {
   const num = Number.parseFloat(value);
@@ -870,7 +871,7 @@ Thanks!`
                     className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
                     onClick={() => setMobileMenuOpen(true)}
                   >
-                    <FaBars /> Filters & Search
+                    <FaBars /> Filters
                   </button>
                 </div>
               )}
@@ -911,7 +912,7 @@ Thanks!`
                 transition={{ type: "spring", stiffness: 260, damping: 32 }}
               >
                 <div className="mobile-filter-header d-flex align-items-center justify-content-between mb-3">
-                  <h5 className="mb-0">Search & Filters</h5>
+                  <h5 className="mb-0">Filters</h5>
                   <button
                     type="button"
                     className="btn btn-sm btn-light"
@@ -1366,56 +1367,59 @@ Thanks!`
         </AnimatePresence>
 
         <AnimatePresence>
-          {showSelectionSummary && selectedCount > 0 && !showCart && (
-            <motion.div
-              className="cart-sticky-cta"
-              aria-live="polite"
-              initial={{ y: 80, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 80, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div>
-                <p className="cart-sticky-count mb-1">
-                  {selectedCount} candidate
-                  {selectedCount > 1 ? "s" : ""} selected
-                </p>
-                <p className="cart-sticky-sub text-muted mb-0">
-                  Add them to cart or share with your team
-                </p>
-              </div>
-              <div className="cart-sticky-actions">
-                <button
-                  type="button"
-                  className="btn btn-link text-decoration-none"
-                  onClick={clearSelections}
-                >
-                  Clear
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-light"
-                  onClick={copySelectionShareUrl}
-                >
-                  ↗ Share
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={shareSelectionOnWhatsApp}
-                >
-                  WhatsApp
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={addSelectionToCart}
-                >
-                  Add to cart
-                </button>
-              </div>
-            </motion.div>
-          )}
+          {showSelectionSummary &&
+            selectedCount > 0 &&
+            !showCart &&
+            !mobileMenuOpen && (
+              <motion.div
+                className="cart-sticky-cta"
+                aria-live="polite"
+                initial={{ y: 80, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 80, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <div>
+                  <p className="cart-sticky-count mb-1">
+                    {selectedCount} candidate
+                    {selectedCount > 1 ? "s" : ""} selected
+                  </p>
+                  <p className="cart-sticky-sub text-muted mb-0">
+                    Add them to cart or share with your team
+                  </p>
+                </div>
+                <div className="cart-sticky-actions">
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none"
+                    onClick={clearSelections}
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-light"
+                    onClick={copySelectionShareUrl}
+                  >
+                    ↗ Share
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={shareSelectionOnWhatsApp}
+                  >
+                    WhatsApp
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={addSelectionToCart}
+                  >
+                    Add to cart
+                  </button>
+                </div>
+              </motion.div>
+            )}
         </AnimatePresence>
       </div>
       <Footer />
