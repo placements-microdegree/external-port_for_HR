@@ -130,13 +130,13 @@ export default function CandidateCard({
               {formatExperience(student.experience)}
             </span>
           </div>
-          <div className="meta-item">
+          <div className="meta-item meta-hide-mobile">
             <span className="meta-label">Notice Period</span>
             <span className="meta-value">
               {formatNotice(student.notice_period)}
             </span>
           </div>
-          <div className="meta-item">
+          <div className="meta-item meta-hide-mobile">
             <span className="meta-label">Preferred Location</span>
             <span className="meta-value">{primaryLocation}</span>
           </div>
@@ -146,13 +146,13 @@ export default function CandidateCard({
               1
             )} LPA`}</span>
           </div>
-          <div className="meta-item">
+          <div className="meta-item meta-hide-mobile">
             <span className="meta-label">Expected CTC</span>
             <span className="meta-value">{`${toLpa(
               student.expected_ctc
             ).toFixed(1)} LPA`}</span>
           </div>
-          <div className="meta-item">
+          <div className="meta-item meta-hide-mobile">
             <span className="meta-label">Work Mode</span>
             <span className="meta-value">{workModeLabel}</span>
           </div>

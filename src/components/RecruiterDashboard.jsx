@@ -562,6 +562,15 @@ Thanks!`
     [cartCandidates, shareOnWhatsAppForSet]
   );
 
+  const shareSelectionOnWhatsApp = useCallback(
+    () =>
+      shareOnWhatsAppForSet(
+        null,
+        "Select candidates before sharing via WhatsApp."
+      ),
+    [shareOnWhatsAppForSet]
+  );
+
   const clearAllFilters = () => {
     setFilters(getInitialFilters());
   };
@@ -1389,6 +1398,13 @@ Thanks!`
                   onClick={copySelectionShareUrl}
                 >
                   ↗ Share
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={shareSelectionOnWhatsApp}
+                >
+                  WhatsApp
                 </button>
                 <button
                   type="button"
