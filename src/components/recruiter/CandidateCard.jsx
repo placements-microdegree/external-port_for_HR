@@ -105,6 +105,9 @@ export default function CandidateCard({
                     student.updated_at || student.created_at
                   )}
                 </span>
+                <span className="ctc-inline">
+                  • {currentCtcLpa.toFixed(1)} LPA
+                </span>
               </div>
             </div>
           </div>
@@ -124,13 +127,13 @@ export default function CandidateCard({
         </div>
 
         <div className="candidate-card-meta-grid">
-          <div className="meta-item">
+          <div className="meta-item meta-hide-xl">
             <span className="meta-label">Experience</span>
             <span className="meta-value">
               {formatExperience(student.experience)}
             </span>
           </div>
-          <div className="meta-item meta-hide-mobile">
+          <div className="meta-item meta-hide-mobile meta-hide-xl">
             <span className="meta-label">Notice Period</span>
             <span className="meta-value">
               {formatNotice(student.notice_period)}
@@ -146,13 +149,13 @@ export default function CandidateCard({
               1
             )} LPA`}</span>
           </div>
-          <div className="meta-item meta-hide-mobile">
+          <div className="meta-item meta-hide-mobile meta-hide-xl">
             <span className="meta-label">Expected CTC</span>
             <span className="meta-value">{`${toLpa(
               student.expected_ctc
             ).toFixed(1)} LPA`}</span>
           </div>
-          <div className="meta-item meta-hide-mobile">
+          <div className="meta-item meta-hide-mobile meta-hide-xl">
             <span className="meta-label">Work Mode</span>
             <span className="meta-value">{workModeLabel}</span>
           </div>

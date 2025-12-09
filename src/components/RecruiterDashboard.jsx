@@ -843,7 +843,7 @@ Thanks!`
             transition={{ duration: 0.35 }}
           >
             {!isSharedView && (
-              <div className="col-12 col-lg-3 d-none d-lg-block">
+              <div className="col-12 col-lg-3 d-none d-lg-block ">
                 <div className="sidebar-stack">
                   <FiltersPanel
                     filters={filters}

@@ -62,7 +62,7 @@ export default function RecruiterNavbar({
             type="search"
             value={searchValue}
             onChange={handleSearchChange}
-            placeholder="Search by name, skill, experience"
+            placeholder="Sear ch by name, skill, experience"
           />
         </label>
       )}
