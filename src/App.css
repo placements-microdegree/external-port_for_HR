@@ -38,13 +38,13 @@
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #007bff, #00bcd4);
+  background: linear-gradient(90deg, #275df5, #275df5);
   /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
 }
 
 .btn-gradient {
-  background: linear-gradient(90deg, #007bff, #00bcd4);
+  background: linear-gradient(90deg, #275df5, #275df5);
   color: white;
   border: none;
   transition: all 0.3s ease;
@@ -108,15 +108,15 @@
   background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
   border-radius: 20px;
   border: none;
-  box-shadow: 0 10px 40px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 10px 40px var(--P100);
 }
 
 .request-modal .modal-header {
-  background: linear-gradient(90deg, #007bff, #00c6ff);
+  background: linear-gradient(90deg, #275df5, #275df5);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   padding: 1rem 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 4px 15px var(--P100);
 }
 
 .request-modal .modal-title {
@@ -135,7 +135,7 @@
 
 .request-modal .form-control:focus {
   border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 0.2rem var(--P100);
 }
 
 .request-modal label {
@@ -145,7 +145,7 @@
 }
 
 .request-modal .btn-primary {
-  background: linear-gradient(90deg, #007bff, #00c6ff);
+  background: linear-gradient(90deg, #275df5, #275df5);
   border: none;
   font-weight: 600;
   border-radius: 10px;
@@ -155,7 +155,7 @@
 
 .request-modal .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 12px var(--P100);
 }
 
 .request-modal .btn-secondary {
@@ -175,7 +175,7 @@
 /* 🌟 Enhanced Modal Header */
 .recruiter-modal-header {
   padding: 1rem 1.5rem;
-  background: linear-gradient(90deg, #007bff, #00c6ff);
+  background: linear-gradient(90deg, #275df5, #275df5);
   color: white !important;
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
@@ -188,11 +188,8 @@
   width: 100%;
   margin: 0 auto 10px auto;
   border-radius: 6px;
-  background: linear-gradient(90deg, #007bff, #00c6ff, #7dd3fc);
+  background: linear-gradient(90deg, #275df5, #275df5, #275df5);
   background-size: 200% 200%;
   animation: shimmerBlue 2.5s infinite linear;
-  box-shadow: 0 3px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 3px 12px var(--P100);
 }
-
-
-

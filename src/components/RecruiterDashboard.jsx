@@ -1172,7 +1172,12 @@ Thanks!`
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               open
-              style={{ pointerEvents: "none" }}
+              onClick={(e) => {
+                // Close when clicking outside the popover
+                if (e.target === e.currentTarget) {
+                  closeDetails();
+                }
+              }}
             >
               <motion.div
                 className="candidate-popover"
