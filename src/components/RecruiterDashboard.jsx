@@ -312,6 +312,7 @@ export default function RecruiterDashboard() {
   const [heroCollapsed, setHeroCollapsed] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const [showTopCollections, setShowTopCollections] = useState(false);
+  const [logoBlob, setLogoBlob] = useState(null);
   const selectedCount = selectedCandidates.size;
   const cartCount = cartCandidates.size;
   const detailsRef = useRef(null);
@@ -336,6 +337,20 @@ export default function RecruiterDashboard() {
       setLoading(false);
     };
     fetchStudents();
+  }, []);
+
+  // Preload logo for sharing
+  useEffect(() => {
+    const preloadLogo = async () => {
+      try {
+        const response = await fetch(Logo);
+        const blob = await response.blob();
+        setLogoBlob(blob);
+      } catch (err) {
+        console.log("Failed to preload logo for sharing");
+      }
+    };
+    preloadLogo();
   }, []);
 
   useEffect(() => {
@@ -515,20 +530,12 @@ export default function RecruiterDashboard() {
           url: shareUrl,
         };
 
-        // Try to add logo file if Web Share Files API is supported
-        if (navigator?.canShare?.({ files: [] }) !== false) {
-          fetch(Logo)
-            .then((res) => res.blob())
-            .then((blob) => {
-              const file = new File([blob], "microdegree-logo.png", {
-                type: "image/png",
-              });
-              navigator.share({ ...shareData, files: [file] }).catch(() => {});
-            })
-            .catch(() => {
-              // If logo fetch fails, share without file
-              navigator.share(shareData).catch(() => {});
-            });
+        // Try to add logo file if available and Web Share Files API is supported
+        if (logoBlob && navigator?.canShare?.({ files: [] }) !== false) {
+          const file = new File([logoBlob], "microdegree-logo.png", {
+            type: "image/png",
+          });
+          navigator.share({ ...shareData, files: [file] }).catch(() => {});
         } else {
           // Fallback to sharing without files
           navigator.share(shareData).catch(() => {});
@@ -541,7 +548,7 @@ export default function RecruiterDashboard() {
         globalThis.prompt?.("Copy this share link", shareUrl);
       }
     },
-    [buildShareUrl]
+    [buildShareUrl, logoBlob]
   );
 
   const shareOnWhatsAppForSet = useCallback(
