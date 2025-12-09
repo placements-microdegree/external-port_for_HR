@@ -6,6 +6,7 @@ import {
   FaLayerGroup,
   FaSearch,
   FaShoppingCart,
+  FaTimes,
 } from "react-icons/fa";
 import Logo from "../../assets/Logo.png";
 
@@ -32,9 +33,17 @@ export default function RecruiterNavbar({
     onSearchChange(event.target.value);
   };
 
+  const handleBrandClick = () => {
+    window.location.reload();
+  };
+
   return (
     <nav className="recruiter-navbar" aria-label="Primary Navigation">
-      <div className="recruiter-navbar-brand">
+      <div
+        className="recruiter-navbar-brand"
+        onClick={handleBrandClick}
+        style={{ cursor: "pointer" }}
+      >
         <img src={Logo} alt="MicroDegree" className="recruiter-navbar-logo" />
         <div>
           <p className="mb-0 recruiter-navbar-title">MicroDegree</p>
@@ -49,7 +58,11 @@ export default function RecruiterNavbar({
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen((prev) => !prev)}
       >
-        <FaBars aria-hidden="true" />
+        {menuOpen ? (
+          <FaTimes aria-hidden="true" />
+        ) : (
+          <FaBars aria-hidden="true" />
+        )}
       </button>
 
       {showSearch && (

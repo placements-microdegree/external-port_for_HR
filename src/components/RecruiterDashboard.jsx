@@ -503,15 +503,27 @@ export default function RecruiterDashboard() {
     (sourceSet, emptyMessage) => {
       const shareUrl = buildShareUrl(sourceSet);
       if (!shareUrl) {
-        toast.info(emptyMessage);
         return;
       }
-      if (navigator?.clipboard?.writeText) {
-        navigator.clipboard
-          .writeText(shareUrl)
-          .then(() => toast.success("Share URL copied to clipboard"))
-          .catch(() => toast.error("Unable to copy share link"));
+
+      // Use Web Share API if available (mobile, iPad, newer browsers)
+      if (navigator?.share) {
+        navigator
+          .share({
+            title: "MicroDegree - Talent Shortlist",
+            text: "Check out this curated talent shortlist",
+            url: shareUrl,
+          })
+          .catch((err) => {
+            if (err.name !== "AbortError") {
+              // AbortError occurs when user cancels the share dialog
+            }
+          });
+      } else if (navigator?.clipboard?.writeText) {
+        // Fallback to clipboard for desktop browsers without Web Share API
+        navigator.clipboard.writeText(shareUrl).catch(() => {});
       } else {
+        // Final fallback for older browsers
         globalThis.prompt?.("Copy this share link", shareUrl);
       }
     },
