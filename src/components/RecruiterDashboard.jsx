@@ -18,6 +18,7 @@ import RecruiterNavbar from "./recruiter/RecruiterNavbar";
 import Footer from "./Footer";
 import SharedSelectionBanner from "./SharedSelectionBanner";
 import { SkillBadge } from "./SkillBadgeDesign";
+import Logo from "../assets/Logo.png";
 import "./RecruiterDashboard.css";
 
 const MotionDialog = motion.dialog;
@@ -508,17 +509,30 @@ export default function RecruiterDashboard() {
 
       // Use Web Share API if available (mobile, iPad, newer browsers)
       if (navigator?.share) {
-        navigator
-          .share({
-            title: "MicroDegree - Talent Shortlist",
-            text: "Check out this curated talent shortlist",
-            url: shareUrl,
-          })
-          .catch((err) => {
-            if (err.name !== "AbortError") {
-              // AbortError occurs when user cancels the share dialog
-            }
-          });
+        const shareData = {
+          title: "MicroDegree - Talent Shortlist",
+          text: "Check out this curated talent shortlist",
+          url: shareUrl,
+        };
+
+        // Try to add logo file if Web Share Files API is supported
+        if (navigator?.canShare?.({ files: [] }) !== false) {
+          fetch(Logo)
+            .then((res) => res.blob())
+            .then((blob) => {
+              const file = new File([blob], "microdegree-logo.png", {
+                type: "image/png",
+              });
+              navigator.share({ ...shareData, files: [file] }).catch(() => {});
+            })
+            .catch(() => {
+              // If logo fetch fails, share without file
+              navigator.share(shareData).catch(() => {});
+            });
+        } else {
+          // Fallback to sharing without files
+          navigator.share(shareData).catch(() => {});
+        }
       } else if (navigator?.clipboard?.writeText) {
         // Fallback to clipboard for desktop browsers without Web Share API
         navigator.clipboard.writeText(shareUrl).catch(() => {});
