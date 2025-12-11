@@ -46,7 +46,7 @@ export default function RecruiterNavbar({
       >
         <img src={Logo} alt="MicroDegree" className="recruiter-navbar-logo" />
         <div>
-          <p className="mb-0 recruiter-navbar-title">MicroDegree</p>
+          <p className="mb-0 recruiter-navbar-title">Prajnesh kumar</p>
           <small className="text-muted">Talent Cloud</small>
         </div>
       </div>
