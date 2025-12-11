@@ -1392,10 +1392,6 @@ Thanks!`
                           ? "Submitting..."
                           : "Submit Interest"}
                       </button>
-                      <div className="small text-muted mt-2">
-                        (Email notifications will be sent when SMTP is
-                        configured.)
-                      </div>
                     </form>
                   )}
                 </div>
