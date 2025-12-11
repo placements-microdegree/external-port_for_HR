@@ -1838,7 +1838,7 @@
   }
 
   .candidate-card-meta-grid .meta-item:nth-child(1),
-  .candidate-card-meta-grid .meta-item:nth-child(5),
+  .candidate-card-meta-grid .meta-item:nth-child(4),
   .candidate-card-meta-grid .meta-item:nth-child(5) {
     display: block !important;
   }
