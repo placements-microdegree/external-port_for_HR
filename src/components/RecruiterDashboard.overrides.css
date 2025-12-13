@@ -1,0 +1,170 @@
+/* RecruiterDashboard Responsive Normalization Overrides
+   ---------------------------------------------------------------------
+   Purpose (Option 2): Keep existing CSS/media queries intact and add a
+   small, deployment-safe override layer that normalizes laptop layouts
+   across different resolutions + OS scaling.
+
+   Core problem:
+   - Some rules are keyed to exact viewport widths (e.g. 1280px), which can
+     occur on many different physical laptops due to scaling/zoom.
+   - When that exact width hits, a compact/fallback layout can apply even
+     on larger screens.
+
+   Strategy:
+   - Do NOT change existing media queries.
+   - Add overrides for “laptop-like” viewports using width + min-height
+     and/or aspect-ratio (device-agnostic).
+   - Only undo the specific compact/fallback effects (transparent card,
+     hidden meta grid/skills).
+*/
+
+/* ---------------------------------------------------------------------
+   1) Normalize "exact 1280px" fallback on laptop-like viewports
+   ---------------------------------------------------------------------
+   Your existing CSS has an exact width rule:
+     @media (width: 1280px) { ... }
+   which can match on 15" laptops (e.g., 1920×1080 @ 150% or 2560×1600 @ 200%).
+
+   We only override it for taller/laptop-like viewports.
+*/
+
+@media (width: 1280px) and (min-height: 850px) {
+  .candidate-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  /* If the compact mode forced inline CTC, hide it when full grid is shown */
+  .ctc-inline {
+    display: none !important;
+  }
+}
+
+/* If a browser reports 1280px but height varies slightly, aspect-ratio helps.
+   This keeps behavior device-agnostic and stable across modern browsers. */
+@media (width: 1280px) and (min-aspect-ratio: 16/10) and (min-height: 820px) {
+  .candidate-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .ctc-inline {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   2) Normalize "narrow XL" 1200–1280 range on laptop-like viewports
+   ---------------------------------------------------------------------
+   If your 1200–1280 rules hide some meta tiles, ensure they remain visible
+   on taller laptop-like viewports.
+*/
+@media (min-width: 1200px) and (max-width: 1280px) and (min-height: 850px) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   3) Ensure 1366×768-class viewports show all meta items
+   ---------------------------------------------------------------------
+   Many 15" laptops end up around ~1366×768 viewport.
+   This keeps full meta visible for that band.
+*/
+@media (min-width: 1330px) and (max-width: 1400px) and (min-height: 700px) and (orientation: landscape) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   4) Normalize common scaled 1080p viewports (e.g., 1536×864)
+   ---------------------------------------------------------------------
+*/
+@media (min-width: 1500px) and (max-width: 1600px) and (min-height: 800px) and (orientation: landscape) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   5) Show 5 meta items on short-height desktops (e.g. 1203×762)
+   ---------------------------------------------------------------------
+   Your base CSS has:
+     @media (min-width: 1200px) and (max-height: 800px) {
+       ...hide all meta tiles except 1,4,5
+     }
+   This is why you only see 3 tiles in the screenshot.
+
+   Requirement: show 5 meta tiles.
+   CandidateCard meta order:
+     1 Experience
+     2 Notice Period
+     3 Preferred Location
+     4 Current CTC
+     5 Expected CTC
+     6 Work Mode
+
+   We keep 5 by hiding only tile #3 (Preferred Location), since location
+   already appears in the inline top row.
+*/
+@media (min-width: 1200px) and (max-height: 800px) and (orientation: landscape) {
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-card-meta-grid .meta-item {
+    display: block !important;
+  }
+
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  /* Hide only Preferred Location tile to keep total at 5 */
+  .candidate-card-meta-grid .meta-item:nth-child(3) {
+    display: none !important;
+  }
+}

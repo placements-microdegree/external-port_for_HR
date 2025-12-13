@@ -1850,3 +1850,120 @@
     flex: 1 1 45%;
   }
 }
+
+/* =====================================================================
+   FIX: 15-inch laptop viewport inconsistency (RESOLUTION-AWARE)
+   
+   WHY DIFFERENT RESOLUTIONS TRIGGER WRONG MEDIA QUERIES:
+   ─────────────────────────────────────────────────────────────────────
+   CSS media queries use CSS pixels (viewport), not physical screen size.
+   A 15" laptop can have vastly different viewport widths:
+   
+   | Resolution    | OS Scaling | Effective Viewport | Triggered Query |
+   |---------------|------------|--------------------| ----------------|
+   | 1366×768      | 100%       | 1366px             | ✓ Correct       |
+   | 1920×1080     | 125%       | 1536px             | ✓ Correct       |
+   | 1920×1080     | 150%       | 1280px             | ✗ 13" fallback  |
+   | 2560×1600     | 200%       | 1280px             | ✗ 13" fallback  |
+   | 2880×1800     | 200%       | 1440px             | ✓ Correct       |
+   
+   THE EXACT CONDITION CAUSING THE BUG:
+   `@media (width: 1280px)` and `@media (min-width: 1200px) and (max-width: 1280px)`
+   These match scaled-down high-res 15" laptops, applying "13-inch" compact styles.
+   
+   THIS FIX USES:
+   - aspect-ratio to distinguish laptop screens from actual small displays
+   - min-height as secondary discriminator (15" laptops are typically taller)
+   - Covers common 15" viewport scenarios without device-specific logic
+   ===================================================================== */
+
+/* Override compact layout for 1280px width on TALL viewports (15" laptops with scaling) */
+@media (width: 1280px) and (min-height: 850px) {
+  .candidate-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .ctc-inline {
+    display: none !important;
+  }
+}
+
+/* Handle 1200-1280px range on taller viewports */
+@media (min-width: 1200px) and (max-width: 1280px) and (min-height: 850px) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+}
+
+/* ASPECT-RATIO BASED FIX: Target widescreen laptops (16:10, 16:9) with 1280px viewport */
+/* This catches scaled high-res displays that have laptop aspect ratios */
+@media (width: 1280px) and (min-aspect-ratio: 16/10) {
+  .candidate-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .ctc-inline {
+    display: none !important;
+  }
+}
+
+/* Cover 1366px viewport (common on 15" laptops with 1366×768 native or scaled) */
+@media (min-width: 1280px) and (max-width: 1400px) and (min-height: 768px) and (min-aspect-ratio: 16/10) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+}
+
+/* Normalize layout for scaled high-DPI 15" displays (1536px viewport from 1920×1080 @ 125%) */
+@media (min-width: 1500px) and (max-width: 1600px) and (min-height: 800px) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+}
+
+/* 1366×768 viewport - display all meta items */
+@media (min-width: 1336px) and (max-width: 1400px) and (min-height: 700px) {
+  .candidate-card .meta-item.meta-hide-xl {
+    display: block !important;
+  }
+
+  .candidate-card-meta-grid {
+    display: grid !important;
+  }
+
+  .candidate-skill-row {
+    display: flex !important;
+  }
+}

@@ -20,6 +20,7 @@ import SharedSelectionBanner from "./SharedSelectionBanner";
 import { SkillBadge } from "./SkillBadgeDesign";
 import Logo from "../assets/Logo.png";
 import "./RecruiterDashboard.css";
+import "./RecruiterDashboard.overrides.css";
 
 const MotionDialog = motion.dialog;
 
@@ -347,7 +348,7 @@ export default function RecruiterDashboard() {
         const blob = await response.blob();
         setLogoBlob(blob);
       } catch (err) {
-        console.log("Failed to preload logo for sharing");
+        console.log("Failed to preload logo for sharing", err);
       }
     };
     preloadLogo();
