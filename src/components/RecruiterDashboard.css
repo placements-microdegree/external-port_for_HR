@@ -1967,3 +1967,9 @@
     display: flex !important;
   }
 }
+
+@media (min-width: 2000px) and (max-height: 1100px) {
+  .recruiter-hero-card {
+    height: 90vh;
+  }
+}
