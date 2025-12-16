@@ -668,10 +668,6 @@ export default function RecruiterDashboardFixed() {
                     >
                       {interestSubmitting ? "Submitting..." : "Submit Interest"}
                     </button>
-                    <div className="small text-muted mt-2">
-                      (Emails will be sent when SMTP credentials are
-                      configured.)
-                    </div>
                   </form>
                 ) : (
                   <div className="alert alert-success py-2 px-3 d-flex align-items-center gap-2">

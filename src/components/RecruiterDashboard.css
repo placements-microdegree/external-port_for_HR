@@ -1830,7 +1830,7 @@
 /* Fixed positioning for 1200x800 and 1280px width displays */
 @media (min-width: 1200px) and (max-height: 800px) {
   .cart-sticky-cta {
-    bottom: 92px;
+    bottom: 26px;
   }
 
   /* Show only CTC, Experience, and Expected CTC in meta grid */
