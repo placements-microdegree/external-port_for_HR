@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+
+/* global globalThis */
 import {
   FaBars,
   FaCompass,
   FaFilter,
   FaLayerGroup,
+  FaMoon,
   FaSearch,
   FaShoppingCart,
+  FaSun,
   FaTimes,
 } from "react-icons/fa";
 import Logo from "../../assets/Logo.png";
 
 const noop = () => {};
+
+const THEME_STORAGE_KEY = "md-theme";
+
+const readStoredTheme = () => {
+  try {
+    const stored = globalThis.localStorage?.getItem(THEME_STORAGE_KEY);
+    return stored === "light" || stored === "dark" ? stored : null;
+  } catch {
+    return null;
+  }
+};
 
 export default function RecruiterNavbar({
   selectedCount = 0,
@@ -24,32 +40,62 @@ export default function RecruiterNavbar({
   onSearchChange = noop,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => readStoredTheme() || "dark");
   const safeSelectedCount = Number.isFinite(selectedCount) ? selectedCount : 0;
   const safeCollectionsCount = Number.isFinite(collectionsCount)
     ? collectionsCount
     : 0;
+
+  const isDark = theme === "dark";
+  const themeIcon = useMemo(
+    () =>
+      isDark ? <FaSun aria-hidden="true" /> : <FaMoon aria-hidden="true" />,
+    [isDark]
+  );
+  const themeLabel = isDark ? "Switch to light theme" : "Switch to dark theme";
+
+  useEffect(() => {
+    try {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+      globalThis.localStorage?.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Ignore storage or DOM write failures.
+    }
+  }, [theme]);
 
   const handleSearchChange = (event) => {
     onSearchChange(event.target.value);
   };
 
   const handleBrandClick = () => {
-    window.location.reload();
+    globalThis.location?.reload();
   };
 
   return (
     <nav className="recruiter-navbar" aria-label="Primary Navigation">
-      <div
+      <button
+        type="button"
         className="recruiter-navbar-brand"
         onClick={handleBrandClick}
-        style={{ cursor: "pointer" }}
+        aria-label="Reload"
       >
         <img src={Logo} alt="MicroDegree" className="recruiter-navbar-logo" />
         <div>
           <p className="mb-0 recruiter-navbar-title">MicroDegree</p>
           <small className="text-muted">Talent Cloud</small>
         </div>
-      </div>
+      </button>
+
+      <button
+        type="button"
+        className="recruiter-nav-theme recruiter-nav-theme-mobile d-lg-none"
+        aria-label={themeLabel}
+        title={themeLabel}
+        onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+      >
+        {themeIcon}
+      </button>
 
       <button
         type="button"
@@ -81,7 +127,11 @@ export default function RecruiterNavbar({
       )}
 
       <div className={`recruiter-navbar-actions${menuOpen ? " is-open" : ""}`}>
-        <button type="button" className="recruiter-nav-btn" onClick={onBrowse}>
+        <button
+          type="button"
+          className="recruiter-nav-btn recruiter-nav-btn-accent"
+          onClick={onBrowse}
+        >
           <FaCompass aria-hidden="true" />
           <span>Browse Talent</span>
         </button>
@@ -95,7 +145,7 @@ export default function RecruiterNavbar({
         </button>
         <button
           type="button"
-          className="recruiter-nav-btn"
+          className="recruiter-nav-btn recruiter-nav-btn-accent"
           onClick={onCollections}
         >
           <FaLayerGroup aria-hidden="true" />
@@ -106,6 +156,19 @@ export default function RecruiterNavbar({
             </span>
           )}
         </button>
+
+        <button
+          type="button"
+          className="recruiter-nav-theme d-none d-lg-inline-flex"
+          aria-label={themeLabel}
+          title={themeLabel}
+          onClick={() =>
+            setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+          }
+        >
+          {themeIcon}
+        </button>
+
         <button
           type="button"
           className="recruiter-nav-cart"
@@ -123,3 +186,15 @@ export default function RecruiterNavbar({
     </nav>
   );
 }
+
+RecruiterNavbar.propTypes = {
+  selectedCount: PropTypes.number,
+  showSearch: PropTypes.bool,
+  collectionsCount: PropTypes.number,
+  onBrowse: PropTypes.func,
+  onCollections: PropTypes.func,
+  onCart: PropTypes.func,
+  onFiltersToggle: PropTypes.func,
+  searchValue: PropTypes.string,
+  onSearchChange: PropTypes.func,
+};

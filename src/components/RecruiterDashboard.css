@@ -91,7 +91,7 @@
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-bottom: 1px solid var(--border) !important;
     border-radius: 0 !important;
     padding: 0.5rem 0 !important;
   }
@@ -101,7 +101,7 @@
   .ctc-inline {
     display: inline !important;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text);
   }
   .candidate-skill-row {
     display: none !important;
@@ -109,27 +109,165 @@
 }
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap");
 
+/* =====================================================================
+   Dark mode override layer (loaded AFTER Bootstrap)
+   ---------------------------------------------------------------------
+   Bootstrap CSS is imported in RecruiterDashboard.jsx before this file.
+   That means any dark-mode overrides must live here (or later) to win.
+   ===================================================================== */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  /* Bootstrap sets body background via --bs-body-bg; override it after Bootstrap */
+  --bs-body-bg: var(--bg);
+  --bs-body-color: var(--text);
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #root {
+  background-color: var(--bg) !important;
+  color: var(--text);
+}
+
+html[data-theme="dark"] .recruiter-dashboard {
+  color: var(--text);
+}
+
+/* In dark mode, ensure all inline SVG icons render white */
+html[data-theme="dark"] .recruiter-dashboard svg {
+  color: #fff;
+}
+
+/* Bootstrap utilities used throughout the dashboard (dark theme only) */
+html[data-theme="dark"] .recruiter-dashboard .bg-white {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-theme="dark"] .recruiter-dashboard .bg-light {
+  background-color: var(--surface-3) !important;
+}
+
+html[data-theme="dark"] .recruiter-dashboard .text-bg-light {
+  background-color: var(--surface-3) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+html[data-theme="dark"] .recruiter-dashboard .text-muted {
+  color: var(--text-muted) !important;
+}
+
+html[data-theme="dark"] .recruiter-dashboard .text-dark,
+html[data-theme="dark"] .recruiter-dashboard .text-body,
+html[data-theme="dark"] .recruiter-dashboard .text-body-secondary,
+html[data-theme="dark"] .recruiter-dashboard .text-body-tertiary {
+  color: var(--text) !important;
+}
+
+html[data-theme="dark"] .recruiter-dashboard .border,
+html[data-theme="dark"] .recruiter-dashboard .border-top,
+html[data-theme="dark"] .recruiter-dashboard .border-bottom,
+html[data-theme="dark"] .recruiter-dashboard .border-start,
+html[data-theme="dark"] .recruiter-dashboard .border-end {
+  border-color: var(--border) !important;
+}
+
+/* Form controls inside the dashboard */
+.recruiter-dashboard .form-control,
+.recruiter-dashboard .form-select,
+.recruiter-dashboard .input-group-text {
+  background-color: var(--surface-3) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+/* React-icons (e.g. FaSearch) use currentColor */
+html[data-theme="dark"] .recruiter-dashboard .input-group-text svg {
+  color: #fff !important;
+}
+
+.recruiter-dashboard .form-control::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+/* Outline buttons (Filters panel uses these heavily) */
+.recruiter-dashboard .btn-outline-secondary {
+  color: var(--text) !important;
+  border-color: var(--border-strong) !important;
+}
+
+.recruiter-dashboard .btn-outline-secondary:hover,
+.recruiter-dashboard .btn-outline-secondary:focus {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.recruiter-dashboard .btn-outline-danger {
+  color: #fca5a5 !important;
+  border-color: rgba(248, 113, 113, 0.6) !important;
+}
+
+.recruiter-dashboard .btn-outline-danger:hover,
+.recruiter-dashboard .btn-outline-danger:focus {
+  background-color: rgba(248, 113, 113, 0.12) !important;
+  color: var(--text) !important;
+}
+
+/* Light buttons (e.g. Share) should render dark in dark mode */
+.recruiter-dashboard .btn-light {
+  background-color: var(--surface-3) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.recruiter-dashboard .btn-light:hover,
+.recruiter-dashboard .btn-light:focus {
+  background-color: var(--surface-2) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text) !important;
+}
+
+.recruiter-dashboard .btn-light:active,
+.recruiter-dashboard .btn-light.active {
+  background-color: var(--surface-2) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text) !important;
+}
+
+.recruiter-dashboard .btn-light:disabled,
+.recruiter-dashboard .btn-light.disabled {
+  background-color: var(--surface-3) !important;
+  border-color: var(--border) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.8;
+}
+
 /* ===================== Card-Based Candidate List ===================== */
 .recruiter-dashboard {
-  background: #f5f7fb;
+  background: var(--bg);
   min-height: 100vh;
   padding-top: 0;
   padding-bottom: 1.25rem;
 }
 
+/* Day mode: keep the dashboard (candidate list area) pure white */
+html:not([data-theme="dark"]) .recruiter-dashboard {
+  background: #fff;
+}
+
 .recruiter-navbar {
-  background: #ffffff;
-  border-radius: 0;
+  background: var(--surface-1);
   padding: 0.75rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  margin: 1rem 0 1.25rem;
+  margin: 0 0 1.25rem;
 
   position: sticky;
-  top: 12px;
+  top: 0;
   z-index: 1050;
   border-radius: 10px;
 }
@@ -138,13 +276,24 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.recruiter-navbar-brand:focus-visible {
+  outline: 2px solid var(--P100);
+  outline-offset: 3px;
+  border-radius: 12px;
 }
 
 .recruiter-navbar-logo {
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: #eef4ff;
+  background: rgba(39, 93, 245, 0.18);
 }
 
 .recruiter-navbar-title {
@@ -159,11 +308,11 @@
   flex: 1 1 300px;
   align-items: center;
   gap: 0.65rem;
-  background: #f5f7ff;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   padding: 0.35rem 0.75rem;
   color: #275df5;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border);
 }
 
 .recruiter-navbar-search input {
@@ -173,10 +322,11 @@
   font-size: 0.9rem;
   outline: none;
   min-width: 0;
+  color: var(--text);
 }
 
 .recruiter-navbar-search input::placeholder {
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .recruiter-navbar-actions {
@@ -189,7 +339,7 @@
 
 .recruiter-nav-hamburger {
   border: none;
-  background: #f5f7ff;
+  background: rgba(255, 255, 255, 0.06);
   color: #275df5;
   width: 42px;
   height: 42px;
@@ -217,13 +367,13 @@
 
 .recruiter-navbar-stat-strong {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text);
 }
 
 .recruiter-nav-btn {
   border: none;
-  background: #f5f7ff;
-  color: #275df5;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
   padding: 0.55rem 1.25rem;
   border-radius: 999px;
   font-weight: 600;
@@ -237,8 +387,12 @@
 .recruiter-nav-btn:hover,
 .recruiter-nav-btn:focus {
   transform: translateY(-2px);
-  background: #e0e7ff;
+  background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 15px 30px -18px rgba(15, 23, 42, 0.9);
+}
+
+html[data-theme="light"] .recruiter-nav-btn.recruiter-nav-btn-accent {
+  color: #0d6efd;
 }
 
 .recruiter-nav-cart {
@@ -259,6 +413,28 @@
 .recruiter-nav-cart:hover,
 .recruiter-nav-cart:focus {
   transform: translateY(-2px) scale(1.03);
+}
+
+.recruiter-nav-theme {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.8);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.recruiter-nav-theme:hover,
+.recruiter-nav-theme:focus {
+  transform: translateY(-2px) scale(1.03);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 30px -18px rgba(15, 23, 42, 0.9);
 }
 
 .recruiter-nav-pill {
@@ -294,7 +470,11 @@
   margin-bottom: 1.5rem;
   padding: 3.5rem 2rem;
   border-radius: 0;
-  background: linear-gradient(180deg, #dce8ff, #c5d9ff);
+  background: linear-gradient(
+    180deg,
+    rgba(39, 93, 245, 0.18),
+    rgba(15, 23, 42, 0.98)
+  );
   box-shadow: 0 25px 60px -35px rgba(15, 23, 42, 0.85);
   display: flex;
   align-items: center;
@@ -304,6 +484,12 @@
   flex-wrap: wrap;
   height: 75vh;
   min-height: 43rem;
+}
+
+/* Light theme: keep hero background light (no dark fade) */
+html[data-theme="light"] .recruiter-hero-card {
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-2));
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
 }
 
 .hero-content {
@@ -327,7 +513,7 @@
 
 .hero-cta-note {
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-muted);
   text-align: center;
   max-width: 320px;
 }
@@ -345,13 +531,13 @@
   font-size: clamp(1.75rem, 4vw, 2.6rem);
   font-weight: 700;
   font-family: "Roboto", sans-serif;
-  color: #0f172a;
+  color: var(--text);
   margin-bottom: 0.5rem;
 }
 
 .hero-subtitle {
   font-size: 1.1rem;
-  color: #111827;
+  color: var(--text);
   max-width: 520px;
   margin-bottom: 0;
 }
@@ -423,8 +609,8 @@
   gap: 1.25rem;
   padding: 1rem 1.5rem;
   border-radius: 24px;
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
   text-align: right;
 }
 
@@ -433,13 +619,13 @@
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--text-muted);
   margin-bottom: 0.35rem;
 }
 
 .hero-meta-value {
   font-size: 1.25rem;
-  color: #0f172a;
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -473,7 +659,7 @@
 
 .cart-panel {
   width: min(640px, 92vw);
-  background: #ffffff;
+  background: var(--surface-1);
   border-radius: 32px;
   padding: 1.5rem;
   box-shadow: 0 25px 65px -30px rgba(15, 23, 42, 0.8);
@@ -498,10 +684,10 @@
 }
 
 .cart-item {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 0.85rem 1rem;
-  background: #fdfcff;
+  background: rgba(255, 255, 255, 0.04);
   display: flex;
   justify-content: space-between;
   gap: 0.75rem;
@@ -513,7 +699,7 @@
   flex-wrap: wrap;
   gap: 0.4rem 0.8rem;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .cart-panel-actions {
@@ -542,7 +728,7 @@
 .cart-empty-state {
   text-align: center;
   padding: 2rem 1rem;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 @media (max-width: 992px) {
@@ -604,7 +790,16 @@
     }
   }
   .recruiter-navbar-brand {
-    padding-right: 56px;
+    padding-right: 112px;
+  }
+
+  .recruiter-nav-theme-mobile {
+    display: inline-flex;
+    position: absolute;
+    top: 0.9rem;
+    right: calc(1.5rem + 48px);
+    width: 42px;
+    height: 42px;
   }
 
   .recruiter-nav-hamburger {
@@ -729,15 +924,13 @@
 
 .recruiter-dashboard .row.g-4 {
   transition: margin-top 0.3s ease;
-
-  /* height: 70%; */
 }
 
 .recruiter-header-logo {
   width: 90px;
   height: 90px;
   border-radius: 10px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
   padding: 12px;
   box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.45);
 }
@@ -771,7 +964,7 @@
 }
 
 .modal-content-custom {
-  background: #ffffff;
+  background: var(--surface-1);
   border-radius: 24px;
   box-shadow: 0 25px 65px -25px rgba(15, 23, 42, 0.65);
   position: relative;
@@ -814,8 +1007,8 @@
 
 .filter-chip {
   border: none;
-  background: rgba(0, 123, 255, 0.12);
-  color: #0050b3;
+  background: rgba(59, 130, 246, 0.22);
+  color: var(--text);
   border-radius: 999px;
   padding: 0.3rem 0.85rem;
   font-size: 0.8rem;
@@ -829,44 +1022,14 @@
 
 .filter-chip:hover,
 .filter-chip:focus {
-  background: rgba(0, 123, 255, 0.2);
-  color: #003d8f;
+  background: rgba(59, 130, 246, 0.3);
+  color: var(--text);
   outline: none;
 }
 
 .filter-chip span:last-child {
   font-size: 1rem;
   line-height: 1;
-}
-
-.candidate-card {
-  display: flex;
-  gap: 0.85rem;
-  padding: 0.75rem 0.9rem;
-  border-radius: 20px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%);
-  box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65);
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.candidate-card.active,
-.candidate-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 35px -22px rgba(15, 23, 42, 0.9);
-  border-color: rgba(0, 123, 255, 0.35);
-}
-
-.candidate-card-select {
-  padding-top: 0.25rem;
-}
-
-.candidate-card-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .candidate-card-top {
@@ -884,20 +1047,6 @@
   align-items: flex-start;
   flex: 1 1 auto;
   min-width: 240px;
-}
-
-.candidate-avatar {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #dce8ff, #c5d9ff);
-  color: #001fff;
-  font-weight: 700;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
 }
 
 .candidate-card-title {
@@ -919,7 +1068,7 @@
 .badge-strip-bottom {
   margin-top: 0.85rem;
   padding-top: 0.6rem;
-  border-top: 1px dashed rgba(15, 23, 42, 0.08);
+  border-top: 1px dashed var(--border);
 }
 
 .candidate-status-badge {
@@ -932,8 +1081,8 @@
   text-transform: uppercase;
   border-radius: 999px;
   padding: 0.25rem 0.75rem;
-  background: rgba(15, 23, 42, 0.08);
-  color: #0f172a;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
   border: 1px solid transparent;
 }
 
@@ -942,21 +1091,21 @@
 }
 
 .candidate-status-badge.badge-amber {
-  background: #fff5e1;
-  color: #b45309;
-  border-color: rgba(180, 83, 9, 0.25);
+  background: rgba(251, 191, 36, 0.16);
+  color: var(--text);
+  border-color: rgba(251, 191, 36, 0.25);
 }
 
 .candidate-status-badge.badge-primary {
-  background: #e0edff;
-  color: #1d4ed8;
-  border-color: rgba(29, 78, 216, 0.25);
+  background: rgba(59, 130, 246, 0.16);
+  color: var(--text);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .candidate-status-badge.badge-success {
-  background: #ecfdf3;
-  color: #047857;
-  border-color: rgba(4, 120, 87, 0.25);
+  background: rgba(16, 185, 129, 0.16);
+  color: var(--text);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .candidate-chip {
@@ -965,8 +1114,8 @@
   padding: 0.1rem 0.65rem;
   font-size: 0.7rem;
   border-radius: 999px;
-  color: #004085;
-  background: rgba(0, 123, 255, 0.12);
+  color: var(--text);
+  background: rgba(59, 130, 246, 0.18);
   letter-spacing: 0.05em;
   margin-bottom: 0.35rem;
 }
@@ -974,12 +1123,12 @@
 .candidate-name {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #101828;
+  color: var(--text);
 }
 
 .candidate-role {
   font-size: 0.95rem;
-  color: #5f6b7c;
+  color: var(--text-muted);
 }
 
 .candidate-meta-inline {
@@ -997,10 +1146,10 @@
 }
 
 .meta-item {
-  background: #f8faff;
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 14px;
   padding: 0.45rem 0.75rem;
-  border: 1px dashed rgba(15, 23, 42, 0.08);
+  border: 1px dashed var(--border);
 }
 
 .meta-label {
@@ -1008,14 +1157,14 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #6c7a91;
+  color: var(--text-muted);
   margin-bottom: 0.2rem;
 }
 
 .meta-value {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text);
 }
 
 .candidate-skill-row {
@@ -1028,15 +1177,16 @@
 .candidate-skill-chip {
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  background: linear-gradient(180deg, #dce8ff, #c5d9ff);
-  color: #001fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  color: var(--text);
   font-size: 0.78rem;
   font-weight: 600;
 }
 
 .candidate-skill-chip.more-chip {
-  background: rgba(15, 23, 42, 0.08);
-  color: #0f172a;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -1044,7 +1194,7 @@
     flex-direction: row;
     padding: 1rem;
     gap: 0.75rem;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    border-bottom: 1px solid var(--border);
     background: transparent;
     box-shadow: none;
     position: relative;
@@ -1220,20 +1370,20 @@
 
 /* 🧱 ROWS */
 .table tbody tr {
-  border-bottom: 1px solid #e5e5e5;
-  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
   transition: background 0.2s ease;
 }
 
 .table tbody tr:hover {
-  background: #f8f9ff;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* 🪶 CELLS */
 .table td {
   padding: 12px 18px !important;
   border: none !important;
-  color: #333;
+  color: var(--text);
   font-weight: 500;
   vertical-align: middle;
 }
@@ -1247,7 +1397,7 @@
   font-weight: 600;
   border-radius: 8px;
   text-transform: uppercase;
-  color: #fff;
+  color: #0b1220;
   margin-left: 8px;
 }
 
@@ -1265,13 +1415,6 @@
 }
 
 /* 🧭 LOCATION BADGE */
-/* .table td span[style*="padding: 8px 14px"] {
-  border-radius: 14px !important;
-  background: #e9f3ff !important;
-  color: #007bff !important;
-  font-weight: 600;
-  font-size: 0.8rem;
-} */
 
 .table td .location-badge {
   border-radius: 14px;
@@ -1293,7 +1436,7 @@
 
 .table td button:hover {
   background: #007bff;
-  color: #fff;
+  color: #0b1220;
 }
 
 /* Larger, easier to click selection checkbox */
@@ -1318,11 +1461,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  background-color: transparent !important;
+  position: relative;
 }
-.candidate-name {
+.candidate-name-cell .candidate-name {
   font-size: 1rem;
   font-weight: 600;
-  color: #212529;
+  color: var(--text);
 }
 
 /* 🧠 FAQ Section Styling */
@@ -1333,8 +1478,8 @@
 .faq-item {
   transition: all 0.3s ease;
   border-radius: 12px !important;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -1351,7 +1496,7 @@
   padding: 18px 22px;
   font-size: 1rem;
   font-weight: 600;
-  color: #222;
+  color: var(--text);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1360,7 +1505,7 @@
 
 .faq-answer {
   padding: 0 22px 18px 22px;
-  color: #555;
+  color: var(--text-muted);
   line-height: 1.6;
   font-size: 0.95rem;
   animation: slideDown 0.3s ease;
@@ -1377,12 +1522,6 @@
   }
 }
 
-/* Remove unwanted cell background (grey box) */
-.candidate-name-cell {
-  background-color: #fff !important;
-  position: relative;
-}
-
 /* Hide tag box completely when it's empty */
 .candidate-name-cell .candidate-tag:empty {
   display: none !important;
@@ -1391,11 +1530,7 @@
 /* Prevent Bootstrap row hover from tinting the name cell */
 .table-hover tbody tr:hover td.candidate-name-cell,
 .table tbody tr:hover td.candidate-name-cell {
-  background-color: #fff !important;
-}
-
-.table td {
-  vertical-align: middle;
+  background-color: transparent !important;
 }
 
 .table td span {
@@ -1436,7 +1571,7 @@
 
   .experience-filter-container .text-muted.small {
     font-size: 0.75rem !important;
-    color: #666 !important;
+    color: var(--text-muted) !important;
   }
 }
 
@@ -1445,7 +1580,7 @@
   cursor: pointer;
 }
 .candidate-list-wrapper table tbody tr.candidate-row:hover {
-  background: #f3f8ff;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* Ensure inline details row accounts for sticky header on scroll */
@@ -1471,13 +1606,28 @@
   position: static;
 }
 
+.filters-close-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .candidate-column-scroll {
   position: sticky;
   top: 10px;
   max-height: calc(100vh - 10px);
   overflow-y: auto;
+  background: #fff;
   padding-right: 0.5rem;
   padding-bottom: 2rem;
+}
+
+html[data-theme="dark"] .candidate-column-scroll {
+  background: transparent;
 }
 
 @media (max-width: 992px) {
@@ -1491,7 +1641,7 @@
 }
 
 .details-panel {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
 }
 
 .details-panel-header {
@@ -1515,8 +1665,12 @@
 }
 
 .shared-selection-banner {
-  background: linear-gradient(120deg, #e0f2fe, #fce7f3);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(
+    120deg,
+    rgba(14, 165, 233, 0.12),
+    rgba(236, 72, 153, 0.12)
+  );
+  border: 1px solid var(--border);
   border-radius: 18px;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
@@ -1529,13 +1683,13 @@
 
 .shared-selection-title {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text);
   margin-bottom: 0.35rem;
 }
 
 .shared-selection-copy {
   margin: 0;
-  color: #475569;
+  color: var(--text-muted);
   font-size: 0.95rem;
 }
 
@@ -1582,7 +1736,7 @@
   max-width: 420px;
   max-height: calc(100vh - 140px);
   overflow-y: auto;
-  background: #ffffff;
+  background: var(--surface-1);
   border-radius: 24px;
   box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.25);
   border: none;
@@ -1607,10 +1761,19 @@
 
 .candidate-popover .popover-body {
   padding: 18px 22px 26px;
+  color: var(--text);
 }
 
-.candidate-popover .skill-badges span {
-  margin-right: 6px;
+.candidate-popover .skill-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.candidate-popover .skill-badge {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
 }
 
 .candidate-popover .interest-form input {
@@ -1650,11 +1813,12 @@
 
 .mobile-filter-drawer {
   width: min(420px, 90vw);
-  background: #ffffff;
+  background: var(--surface-1);
   border-top-left-radius: 24px;
   border-bottom-left-radius: 24px;
   padding: 1.25rem;
   overflow-y: auto;
+  color: var(--text);
 }
 
 .mobile-filter-body {
@@ -1688,7 +1852,7 @@
   .text-muted.fw-semibold {
     text-align: center !important;
     font-size: 0.85rem !important;
-    color: #666 !important;
+    color: var(--text-muted) !important;
   }
 
   /* Adjust the input field size for smaller screens */
@@ -1717,7 +1881,8 @@
   padding: 1rem 1.5rem;
   border-radius: 18px;
   border: 1px solid rgba(5, 150, 105, 0.25);
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--surface-1);
+  color: var(--text);
   box-shadow: 0 35px 60px -30px rgba(15, 23, 42, 0.45);
   z-index: 2000;
   -webkit-backdrop-filter: blur(10px);
@@ -1727,12 +1892,13 @@
 .cart-sticky-count {
   font-size: 1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text);
 }
 
 .cart-sticky-sub {
   font-size: 0.85rem;
   margin: 0;
+  color: var(--text-muted);
 }
 
 .cart-sticky-actions {
@@ -1847,7 +2013,7 @@
 
 @media (min-width: 1268.98px) and (max-width: 1500.98px) {
   .recruiter-navbar-search {
-    flex: 1 1 45%;
+    flex: 1 1 39%;
   }
 }
 

@@ -10,19 +10,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBars, FaCheckCircle, FaUserCheck } from "react-icons/fa";
+import { FaBars, FaCheckCircle } from "react-icons/fa";
 import { supabase } from "../supabaseClient";
 import FiltersPanel from "./FiltersPanel";
 import CandidateList from "./recruiter/CandidateList";
 import RecruiterNavbar from "./recruiter/RecruiterNavbar";
 import Footer from "./Footer";
 import SharedSelectionBanner from "./SharedSelectionBanner";
-import { SkillBadge } from "./SkillBadgeDesign";
 import Logo from "../assets/Logo.png";
 import "./RecruiterDashboard.css";
 import "./RecruiterDashboard.overrides.css";
-
-const MotionDialog = motion.dialog;
 
 const SHARE_BASE_URL =
   process.env.REACT_APP_SHARE_BASE_URL || "http://localhost:3000";
@@ -53,13 +50,6 @@ const REQUEST_FORM_INITIAL = {
   email: "",
   contact: "",
   company: "",
-};
-
-const INTEREST_FORM_INITIAL = {
-  recruiterName: "",
-  recruiterEmail: "",
-  recruiterCompany: "",
-  recruiterPhone: "",
 };
 
 const COMPANY_WHATSAPP_NUMBER =
@@ -248,7 +238,7 @@ const matchesAllFilters = (student, filterState) => {
   if (
     !matchesStringFilter(
       filterState.roles,
-      student.primary_role || student.role
+      student.primary_role || student.role || "Cloud Professional"
     )
   ) {
     return false;
@@ -298,12 +288,7 @@ export default function RecruiterDashboard() {
   const [filters, setFilters] = useState(() => getInitialFilters());
   const [selectedCandidates, setSelectedCandidates] = useState(new Set());
   const [cartCandidates, setCartCandidates] = useState(new Set());
-  const [activeCandidate, setActiveCandidate] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
   const [isSharedView, setIsSharedView] = useState(false);
-  const [interestForm, setInterestForm] = useState(INTEREST_FORM_INITIAL);
-  const [interestSubmitting, setInterestSubmitting] = useState(false);
-  const [interestSuccess, setInterestSuccess] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [showSelectionSummary, setShowSelectionSummary] = useState(false);
@@ -316,7 +301,6 @@ export default function RecruiterDashboard() {
   const [logoBlob, setLogoBlob] = useState(null);
   const selectedCount = selectedCandidates.size;
   const cartCount = cartCandidates.size;
-  const detailsRef = useRef(null);
   const candidateColumnRef = useRef(null);
   const talentSectionRef = useRef(null);
   const closeCart = useCallback(() => setShowCart(false), []);
@@ -406,13 +390,6 @@ export default function RecruiterDashboard() {
     return () => clearInterval(id);
   }, []);
 
-  const closeDetails = useCallback(() => {
-    setShowDetails(false);
-    setActiveCandidate(null);
-    setInterestForm(INTEREST_FORM_INITIAL);
-    setInterestSuccess(false);
-  }, []);
-
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key !== "Escape") return;
@@ -420,34 +397,13 @@ export default function RecruiterDashboard() {
         setResumeModal(null);
       } else if (showRequestModal) {
         setShowRequestModal(false);
-      } else if (showDetails) {
-        closeDetails();
       } else if (showCart) {
         closeCart();
       }
     };
     globalThis.addEventListener?.("keydown", handleEscape);
     return () => globalThis.removeEventListener?.("keydown", handleEscape);
-  }, [
-    resumeModal,
-    showRequestModal,
-    showDetails,
-    showCart,
-    closeDetails,
-    closeCart,
-  ]);
-
-  useEffect(() => {
-    if (!showDetails) return;
-    const handleOutsideClick = (event) => {
-      if (!detailsRef.current) return;
-      if (!detailsRef.current.contains(event.target)) {
-        closeDetails();
-      }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [showDetails, closeDetails]);
+  }, [resumeModal, showRequestModal, showCart, closeCart]);
 
   const toggleSelection = (id) => {
     setSelectedCandidates((prev) => {
@@ -610,37 +566,6 @@ Thanks!`
     setFilters(getInitialFilters());
   };
 
-  const openCandidateDetails = (candidate) => {
-    setActiveCandidate(candidate);
-    setShowDetails(true);
-    setInterestForm(INTEREST_FORM_INITIAL);
-    setInterestSuccess(false);
-  };
-
-  const submitInterest = async (event) => {
-    event.preventDefault();
-    if (!activeCandidate) return;
-    setInterestSubmitting(true);
-    const payload = {
-      full_name: interestForm.recruiterName,
-      email: interestForm.recruiterEmail,
-      contact: interestForm.recruiterPhone,
-      company: interestForm.recruiterCompany,
-      selected_candidates: [activeCandidate.full_name].filter(Boolean),
-    };
-
-    const { error: insertError } = await supabase
-      .from("recruiter_requests")
-      .insert(payload);
-    if (insertError) {
-      toast.error("Unable to record interest right now.");
-    } else {
-      toast.success("Interest recorded");
-      setInterestSuccess(true);
-    }
-    setInterestSubmitting(false);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const selectedNames = cartStudentList
@@ -783,17 +708,6 @@ Thanks!`
     setShowCart(true);
   }, [cartStudentList.length]);
 
-  const handleRowClick = (student, event) => {
-    if (
-      event.target.closest("input") ||
-      event.target.closest("button") ||
-      event.target.closest("a")
-    ) {
-      return;
-    }
-    openCandidateDetails(student);
-  };
-
   const formatExperience = (value) => {
     const num = Number.parseFloat(value);
     if (Number.isNaN(num) || num === 0) return "Fresher";
@@ -913,18 +827,14 @@ Thanks!`
                 students={displayedStudents}
                 loading={loading}
                 error={error}
-                activeCandidateId={activeCandidate?.id}
-                showDetails={showDetails}
-                handleRowClick={handleRowClick}
                 toggleSelection={toggleSelection}
                 selectedCandidates={selectedCandidates}
                 formatExperience={formatExperience}
                 formatNotice={formatNotice}
                 getInitials={getInitials}
-                getRelativeDayLabel={getRelativeDayLabel}
                 toLpa={toLpa}
                 parseCSV={parseCSV}
-                formatWorkMode={formatWorkMode}
+                onOpenResume={(url) => setResumeModal(url)}
               />
             </motion.div>
           </motion.div>
@@ -1193,211 +1103,6 @@ Thanks!`
                 )}
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {showDetails && activeCandidate && (
-            <MotionDialog
-              className="candidate-context-overlay"
-              aria-modal="true"
-              aria-labelledby="candidate-popover-title"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              open
-              onClick={(e) => {
-                // Close when clicking outside the popover
-                if (e.target === e.currentTarget) {
-                  closeDetails();
-                }
-              }}
-            >
-              <motion.div
-                className="candidate-popover"
-                ref={detailsRef}
-                initial={{ x: 40, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 40, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                style={{ pointerEvents: "auto" }}
-              >
-                <header>
-                  <div>
-                    <h5 id="candidate-popover-title" className="mb-1 fw-bold">
-                      {activeCandidate.full_name}
-                    </h5>
-                    <div className="small">
-                      {activeCandidate.primary_role ||
-                        activeCandidate.role ||
-                        "Candidate"}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn-light btn-sm"
-                    onClick={closeDetails}
-                    aria-label="Close candidate details"
-                  >
-                    ✕
-                  </button>
-                </header>
-                <div className="popover-body">
-                  <div className="row g-3 mb-3">
-                    <div className="col-6">
-                      <strong>Experience:</strong>
-                      <div>{formatExperience(activeCandidate.experience)}</div>
-                    </div>
-                    <div className="col-6">
-                      <strong>Notice:</strong>
-                      <div>{formatNotice(activeCandidate.notice_period)}</div>
-                    </div>
-                    <div className="col-6">
-                      <strong>Current CTC:</strong>
-                      <div>
-                        {toLpa(activeCandidate.current_ctc).toFixed(1)} LPA
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <strong>Expected CTC:</strong>
-                      <div>
-                        {toLpa(activeCandidate.expected_ctc).toFixed(1)} LPA
-                      </div>
-                    </div>
-                    <div className="col-12">
-                      <strong>Preferred Location:</strong>
-                      <div>{activeCandidate.preferred_location || "—"}</div>
-                    </div>
-                    <div className="col-12">
-                      <strong>Work Mode:</strong>
-                      <div>{formatWorkMode(activeCandidate.work_mode)}</div>
-                    </div>
-                    <div className="col-12">
-                      <strong>Skills:</strong>
-                      <div className="mt-1 skill-badges">
-                        {parseCSV(activeCandidate.primary_skills).length
-                          ? parseCSV(activeCandidate.primary_skills).map(
-                              (skill, index) => (
-                                <span
-                                  key={`${activeCandidate.id}-${skill}-${index}`}
-                                >
-                                  <SkillBadge skill={skill} />
-                                </span>
-                              )
-                            )
-                          : "—"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {activeCandidate.resume_url && (
-                    <div className="d-flex gap-2 flex-wrap mb-3">
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={() =>
-                          setResumeModal(activeCandidate.resume_url)
-                        }
-                      >
-                        View Resume
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-success"
-                        onClick={() => toggleSelection(activeCandidate.id)}
-                      >
-                        {selectedCandidates.has(String(activeCandidate.id))
-                          ? "Unselect"
-                          : "Select"}
-                      </button>
-                    </div>
-                  )}
-
-                  <h6 className="fw-bold">Mark Interest</h6>
-                  {interestSuccess ? (
-                    <div className="alert alert-success py-2 px-3 d-flex align-items-center gap-2 mt-2">
-                      <FaUserCheck /> Interest recorded.
-                    </div>
-                  ) : (
-                    <form
-                      onSubmit={submitInterest}
-                      className="interest-form"
-                      aria-label="Interest form"
-                    >
-                      <div className="row g-2">
-                        <div className="col-12">
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            placeholder="Your Name"
-                            value={interestForm.recruiterName}
-                            onChange={(e) =>
-                              setInterestForm({
-                                ...interestForm,
-                                recruiterName: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                        <div className="col-12">
-                          <input
-                            type="email"
-                            className="form-control form-control-sm"
-                            placeholder="Your Email"
-                            value={interestForm.recruiterEmail}
-                            onChange={(e) =>
-                              setInterestForm({
-                                ...interestForm,
-                                recruiterEmail: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                        <div className="col-12">
-                          <input
-                            type="tel"
-                            className="form-control form-control-sm"
-                            placeholder="Phone Number"
-                            value={interestForm.recruiterPhone}
-                            onChange={(e) =>
-                              setInterestForm({
-                                ...interestForm,
-                                recruiterPhone: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                        <div className="col-12">
-                          <input
-                            type="text"
-                            className="form-control form-control-sm"
-                            placeholder="Company Name"
-                            value={interestForm.recruiterCompany}
-                            onChange={(e) =>
-                              setInterestForm({
-                                ...interestForm,
-                                recruiterCompany: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-                      </div>
-                      <button
-                        type="submit"
-                        className="btn btn-sm btn-primary w-100 mt-3"
-                        disabled={interestSubmitting}
-                      >
-                        {interestSubmitting
-                          ? "Submitting..."
-                          : "Submit Interest"}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </motion.div>
-            </MotionDialog>
           )}
         </AnimatePresence>
 

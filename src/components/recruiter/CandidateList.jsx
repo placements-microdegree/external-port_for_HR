@@ -1,23 +1,20 @@
 import React from "react";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 import CandidateCard from "./CandidateCard";
 
 export default function CandidateList({
   students,
   loading,
   error,
-  activeCandidateId,
-  showDetails,
-  handleRowClick,
   toggleSelection,
   selectedCandidates,
   formatExperience,
   formatNotice,
   getInitials,
-  getRelativeDayLabel,
   toLpa,
   parseCSV,
-  formatWorkMode,
+  onOpenResume,
 }) {
   if (loading) {
     return (
@@ -53,19 +50,30 @@ export default function CandidateList({
         <CandidateCard
           key={student.id}
           student={student}
-          isActive={showDetails && activeCandidateId === student.id}
           isSelected={selectedCandidates.has(String(student.id))}
           onToggleSelection={toggleSelection}
-          onRowClick={handleRowClick}
           formatExperience={formatExperience}
           formatNotice={formatNotice}
           getInitials={getInitials}
-          getRelativeDayLabel={getRelativeDayLabel}
           toLpa={toLpa}
           parseCSV={parseCSV}
-          formatWorkMode={formatWorkMode}
+          onOpenResume={onOpenResume}
         />
       ))}
     </motion.div>
   );
 }
+
+CandidateList.propTypes = {
+  students: PropTypes.arrayOf(PropTypes.object).isRequired,
+  loading: PropTypes.bool,
+  error: PropTypes.string,
+  toggleSelection: PropTypes.func.isRequired,
+  selectedCandidates: PropTypes.instanceOf(Set).isRequired,
+  formatExperience: PropTypes.func.isRequired,
+  formatNotice: PropTypes.func.isRequired,
+  getInitials: PropTypes.func.isRequired,
+  toLpa: PropTypes.func.isRequired,
+  parseCSV: PropTypes.func.isRequired,
+  onOpenResume: PropTypes.func,
+};

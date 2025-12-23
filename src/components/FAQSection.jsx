@@ -56,8 +56,8 @@ export default function FAQSection() {
             key={index}
             className="faq-item mb-3 rounded-3 shadow-sm"
             style={{
-              background: "#fff",
-              border: "1px solid #e0e0e0",
+              background: "var(--surface-1)",
+              border: "1px solid var(--border)",
               overflow: "hidden",
             }}
           >
@@ -67,7 +67,7 @@ export default function FAQSection() {
                 border: "none",
                 background: "transparent",
                 fontSize: "1.05rem",
-                color: "#222",
+                color: "var(--text)",
               }}
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
             >

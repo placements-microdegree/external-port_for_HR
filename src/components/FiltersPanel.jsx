@@ -1,6 +1,11 @@
 import React from "react";
 
-export default function FiltersPanel({ filters, setFilters, onClear }) {
+export default function FiltersPanel({
+  filters,
+  setFilters,
+  onClear,
+  onClose,
+}) {
   const toggleSet = (key, value) => {
     setFilters((prev) => {
       const next = new Set(prev[key]);
@@ -25,6 +30,7 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
   ];
 
   const ROLE_OPTIONS = [
+    "Cloud Professional",
     "DevOps Engineer",
     "AWS Cloud Engineer",
     "System Administrator",
@@ -152,9 +158,25 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
     <div className="filters-panel p-3 rounded-3 shadow-sm bg-white">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h5 className="mb-0 fw-bold">Filters</h5>
-        <button className="btn btn-sm btn-outline-secondary" onClick={onClear}>
-          Clear All
-        </button>
+        <div className="d-flex align-items-center gap-2">
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={onClear}
+          >
+            Clear All
+          </button>
+          {typeof onClose === "function" && (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary filters-close-btn"
+              onClick={onClose}
+              aria-label="Close filters"
+              title="Close"
+            >
+              ×
+            </button>
+          )}
+        </div>
       </div>
 
       {activeFilterChips.length > 0 && (
@@ -238,26 +260,18 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
         <div className="fw-semibold mb-2">Skills</div>
         <div className="d-flex flex-wrap gap-2">
           {SKILL_OPTIONS.map((s) => (
-            <span
+            <button
               key={s}
-              role="button"
-              tabIndex={0}
-              className={`badge rounded-pill ${
-                filters.skills.has(s) ? "text-bg-primary" : "text-bg-light"
+              type="button"
+              className={`btn btn-sm ${
+                filters.skills.has(s) ? "btn-primary" : "btn-outline-primary"
               }`}
               onClick={() => toggleSet("skills", s)}
-              style={{ padding: "8px 12px", fontWeight: 600 }}
               aria-pressed={filters.skills.has(s)}
               aria-label={`Filter skill: ${s}`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toggleSet("skills", s);
-                }
-              }}
             >
               {s}
-            </span>
+            </button>
           ))}
         </div>
       </section>
@@ -267,26 +281,18 @@ export default function FiltersPanel({ filters, setFilters, onClear }) {
         <div className="fw-semibold mb-2">Certifications</div>
         <div className="d-flex flex-wrap gap-2">
           {CERTS.map((c) => (
-            <span
+            <button
               key={c}
-              role="button"
-              tabIndex={0}
-              className={`badge rounded-pill ${
-                filters.certs.has(c) ? "text-bg-primary" : "text-bg-light"
+              type="button"
+              className={`btn btn-sm ${
+                filters.certs.has(c) ? "btn-primary" : "btn-outline-primary"
               }`}
               onClick={() => toggleSet("certs", c)}
-              style={{ padding: "8px 12px", fontWeight: 600 }}
               aria-pressed={filters.certs.has(c)}
               aria-label={`Filter certification: ${c}`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toggleSet("certs", c);
-                }
-              }}
             >
               {c}
-            </span>
+            </button>
           ))}
         </div>
       </section>

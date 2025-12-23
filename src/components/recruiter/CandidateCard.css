@@ -1,0 +1,375 @@
+/* CandidateCard-only styles.
+   Kept self-contained by anchoring selectors to .candidate-card[data-id]. */
+
+.candidate-card[data-id] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600 !important;
+}
+
+html[data-theme="light"] .candidate-card[data-id] {
+  background: #fff !important;
+  color: #212529;
+}
+
+html[data-theme="dark"] .candidate-card[data-id] {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Keep bold text the same color as normal text (CandidateCard-only) */
+.candidate-card[data-id] strong,
+.candidate-card[data-id] b {
+  color: inherit;
+}
+
+.candidate-card[data-id]:hover,
+.candidate-card[data-id].active {
+  transform: none;
+  border-color: var(--border-strong);
+}
+
+.candidate-card[data-id] .candidate-card-select {
+  padding-top: 0.2rem;
+}
+
+/* Checkbox styling (CandidateCard-only) */
+.candidate-card[data-id] .candidate-select-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid white;
+  background: transparent;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+html[data-theme="light"] .candidate-card[data-id] .candidate-select-checkbox {
+  border-color: rgba(21, 21, 22, 0.55);
+  background: #fff;
+}
+
+html[data-theme="light"]
+  .candidate-card[data-id]
+  .candidate-select-checkbox:checked {
+  background: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.candidate-card[data-id] .candidate-select-checkbox::before {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 120ms ease-in-out;
+}
+
+.candidate-card[data-id] .candidate-select-checkbox:checked::before {
+  border-left-color: #fff;
+  border-bottom-color: #fff;
+  transform: rotate(-45deg) scale(1);
+}
+
+.candidate-card[data-id] .candidate-select-checkbox:checked {
+  background: var(--P100);
+  border-color: var(--P100);
+}
+
+.candidate-card[data-id] .candidate-select-checkbox:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.candidate-card[data-id] .candidate-card-body {
+  min-width: 0;
+  width: 100%;
+}
+
+.candidate-card[data-id] .candidate-card-main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.25rem;
+  align-items: start;
+  margin: -2.2px 0 3px 0;
+}
+
+.candidate-card[data-id] .candidate-card-left {
+  min-width: 0;
+  margin-left: 30px;
+  margin-top: 8px;
+}
+
+.candidate-card[data-id] .candidate-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-width: 0;
+  padding-top: 0.15rem;
+  margin-right: 40px;
+}
+
+.candidate-card[data-id] .candidate-identity {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  gap: 0.75rem;
+}
+
+.candidate-card[data-id] .candidate-identity-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  font-weight: bold;
+}
+
+.candidate-card[data-id] .candidate-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600 !important;
+}
+
+.candidate-card[data-id] .candidate-name {
+  font-size: 1.35rem;
+  font-weight: 600 !important;
+  color: var(--text);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.candidate-card[data-id] .candidate-role.text-muted {
+  color: var(--text-muted) !important;
+  font-size: 0.95rem;
+}
+
+/* Reference screenshot doesn't show the top badge strip */
+.candidate-card[data-id] .candidate-status-badges.badge-strip-top {
+  display: none;
+}
+
+/* Top metrics: icon + value inline (hide the small labels) */
+.candidate-card[data-id] .candidate-card-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem;
+  margin: 0.1rem 0 0.4rem;
+}
+
+.candidate-card[data-id] .candidate-card-metrics .metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.candidate-card[data-id] .candidate-card-metrics .metric-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  opacity: 0.95;
+}
+
+.candidate-card[data-id] .candidate-card-metrics .metric .metric-content {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.candidate-card[data-id] .candidate-card-metrics .metric .metric-value {
+  font-size: 0.95rem;
+  font-weight: 600 !important;
+  white-space: nowrap;
+  margin: 0;
+  display: inline;
+}
+
+.candidate-card[data-id] .candidate-card-metrics .metric small {
+  display: none;
+}
+
+/* Label/value rows */
+.candidate-card[data-id] .candidate-skill-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
+}
+
+.candidate-card[data-id] .candidate-skill-summary .skill-summary-text {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.candidate-card[data-id] .key-label {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.2;
+}
+
+.candidate-card[data-id] .key-value-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600 !important;
+  line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.candidate-card[data-id] .key-skill-inline {
+  font-weight: 600 !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.candidate-card[data-id] .key-location-inline {
+  font-weight: 600 !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* +more should look like link */
+.candidate-card[data-id] .skill-expand {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--P100) !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.candidate-card[data-id] .skill-expand:hover {
+  text-decoration: underline;
+}
+
+/* Expanded skills: text separated by | */
+.candidate-card[data-id] .candidate-skill-row.expanded {
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.candidate-card[data-id] .candidate-skill-row.expanded .candidate-skill-chip {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.candidate-card[data-id]
+  .candidate-skill-row.expanded
+  .candidate-skill-chip:not(:last-child)::after {
+  content: " | ";
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Resume button */
+.candidate-card[data-id] .candidate-actions {
+  margin-top: 0;
+}
+
+.candidate-card[data-id] .view-resume-btn {
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  font-weight: 800;
+  font-size: 0.85rem;
+  line-height: 1.1;
+}
+
+@media (max-width: 900px) {
+  .candidate-card[data-id] .candidate-card-main {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .candidate-card[data-id] .candidate-card-right {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .candidate-card[data-id] .candidate-identity {
+    justify-content: flex-start;
+  }
+
+  .candidate-card[data-id] .candidate-name {
+    font-size: 1.15rem;
+    max-width: 100%;
+  }
+
+  .candidate-card[data-id] .view-resume-btn {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidate-card[data-id] .candidate-card-right {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .candidate-card[data-id] .candidate-identity {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .candidate-card[data-id] .candidate-identity-text {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .candidate-card[data-id] .candidate-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .candidate-card[data-id] .view-resume-btn {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .candidate-card[data-id] .candidate-skill-summary .skill-summary-text {
+    grid-template-columns: 120px 1fr;
+    gap: 0.65rem;
+  }
+}

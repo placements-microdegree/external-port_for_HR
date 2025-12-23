@@ -30,9 +30,13 @@
 
 @media (width: 1280px) and (min-height: 850px) {
   .candidate-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ) !important;
     box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
-    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 20px !important;
     padding: 0.75rem 0.9rem !important;
   }
@@ -59,9 +63,13 @@
    This keeps behavior device-agnostic and stable across modern browsers. */
 @media (width: 1280px) and (min-aspect-ratio: 16/10) and (min-height: 820px) {
   .candidate-card {
-    background: linear-gradient(135deg, #ffffff 0%, #fdfcff 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    ) !important;
     box-shadow: 0 10px 25px -18px rgba(15, 23, 42, 0.65) !important;
-    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 20px !important;
     padding: 0.75rem 0.9rem !important;
   }

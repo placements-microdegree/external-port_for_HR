@@ -224,7 +224,7 @@ export default function RecruiterDashboardFixed() {
             width: 60,
             height: 60,
             borderRadius: "50%",
-            background: "white",
+            background: "var(--surface-1)",
             padding: 6,
           }}
         >
@@ -325,7 +325,7 @@ export default function RecruiterDashboardFixed() {
             className="table-responsive shadow-sm rounded-4 overflow-auto custom-scroll"
             style={{
               border: "1px solid #dee2e6",
-              backgroundColor: "white",
+              backgroundColor: "var(--surface-1)",
               maxHeight: "60vh",
             }}
           >
@@ -483,8 +483,8 @@ export default function RecruiterDashboardFixed() {
                             <span
                               key={i}
                               style={{
-                                backgroundColor: "#F9FAFB",
-                                color: "#555",
+                                backgroundColor: "var(--surface-3)",
+                                color: "var(--text)",
                                 padding: "2px 8px",
                                 borderRadius: 6,
                                 fontWeight: 500,
@@ -503,8 +503,8 @@ export default function RecruiterDashboardFixed() {
                         ) : (
                           <span
                             style={{
-                              backgroundColor: "#F9FAFB",
-                              color: "#777",
+                              backgroundColor: "var(--surface-3)",
+                              color: "var(--text-muted)",
                               padding: "2px 8px",
                               borderRadius: 6,
                               fontSize: "0.75rem",
