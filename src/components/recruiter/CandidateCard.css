@@ -23,6 +23,90 @@ html[data-theme="dark"] .candidate-card[data-id] {
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* Skeleton / shimmer (CandidateList loading state) */
+.candidate-card.candidate-card-skeleton[data-id] {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] {
+  --skeleton-base: rgba(15, 23, 42, 0.10);
+  --skeleton-highlight: rgba(15, 23, 42, 0.04);
+}
+
+html[data-theme="dark"] .candidate-card.candidate-card-skeleton[data-id] {
+  --skeleton-base: rgba(255, 255, 255, 0.10);
+  --skeleton-highlight: rgba(255, 255, 255, 0.18);
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-box,
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-line {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: candidateShimmer 1.15s ease-in-out infinite;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-box {
+  display: block;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-line {
+  height: 12px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .skeleton-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  margin-top: 0.2rem;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-120 {
+  width: 120px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-140 {
+  width: 140px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-160 {
+  width: 160px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-220 {
+  width: 220px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-240 {
+  width: 240px;
+}
+
+.candidate-card.candidate-card-skeleton[data-id] .w-280 {
+  width: 280px;
+}
+
+@keyframes candidateShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Keep bold text the same color as normal text (CandidateCard-only) */
 .candidate-card[data-id] strong,
 .candidate-card[data-id] b {
