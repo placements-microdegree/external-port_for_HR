@@ -38,20 +38,24 @@
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #275df5, #275df5);
-  /* -webkit-background-clip: text; */
+  background: linear-gradient(135deg, var(--P100), #6366f1);
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .btn-gradient {
-  background: linear-gradient(90deg, #275df5, #275df5);
+  background: linear-gradient(135deg, var(--P100), #6366f1);
   color: white;
   border: none;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(90deg, #0056b3, #0097a7);
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
   color: #fff;
 }
 
@@ -106,27 +110,24 @@
 
 /* 🌟 Request Modal Premium Design */
 .request-modal .modal-content {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0.03) 100%
-  );
+  background: var(--surface-1);
   border-radius: 20px;
-  border: none;
-  box-shadow: 0 10px 40px var(--P100);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
 .request-modal .modal-header {
-  background: linear-gradient(90deg, #275df5, #275df5);
+  background: linear-gradient(135deg, var(--P100), #6366f1);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 4px 15px var(--P100);
+  padding: 1.25rem 1.5rem;
+  border-bottom: none;
 }
 
 .request-modal .modal-title {
+  font-family: var(--app-font-display);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: 0.3px;
 }
 
@@ -149,6 +150,7 @@
   color: var(--text);
   font-weight: 600;
   margin-bottom: 6px;
+  font-size: 0.9rem;
 }
 
 .request-modal .btn-primary {
@@ -181,11 +183,12 @@
 
 /* 🌟 Enhanced Modal Header */
 .recruiter-modal-header {
-  padding: 1rem 1.5rem;
-  background: linear-gradient(90deg, #275df5, #275df5);
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, var(--P100), #6366f1);
   color: white !important;
+  font-family: var(--app-font-display);
   font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-bottom: none;
 }
 

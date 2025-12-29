@@ -1,20 +1,19 @@
 :root {
-  --P100: #275df5;
+  --P100: #4f46e5;
 
-  --app-font-sans: "Inter", "Poppins", "Roboto", system-ui, -apple-system,
-    "Segoe UI", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol", "Noto Color Emoji";
+  --app-font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --app-font-display: "Poppins", "Inter", system-ui, sans-serif;
 
-  /* Dark theme primitives */
-  --bg: #0b1220;
+  /* Dark theme primitives: Premium Slate/Indigo */
+  --bg: #020617;
   --surface-1: #0f172a;
-  --surface-2: #111c33;
-  --surface-3: rgba(255, 255, 255, 0.06);
-  --text: #e5e7eb;
-  --text-muted: #a1a1aa;
-  --border: rgba(255, 255, 255, 0.12);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --focus-ring: rgba(39, 93, 245, 0.35);
+  --surface-2: #1e293b;
+  --surface-3: rgba(255, 255, 255, 0.05); /* slightly subtle */
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: rgba(148, 163, 184, 0.15);
+  --border-strong: rgba(148, 163, 184, 0.25);
+  --focus-ring: rgba(79, 70, 229, 0.4);
 }
 
 html[data-theme="light"] {
@@ -36,6 +35,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg);
   color: var(--text);
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 button,
@@ -208,4 +209,12 @@ code {
   to {
     transform: scale(1);
   }
+}
+
+/* Fix: Suppress distracting injected viewport glow */
+#preact-border-shadow-host {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
