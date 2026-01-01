@@ -211,7 +211,7 @@ html[data-theme="dark"] .recruiter-dashboard .input-group-text svg {
 
 .recruiter-dashboard .btn-outline-secondary {
   color: var(--text) !important;
-  border-color: var(--border-strong) !important;
+  border-color: var(--text) !important;
 }
 
 .recruiter-dashboard .btn-outline-secondary:hover,
