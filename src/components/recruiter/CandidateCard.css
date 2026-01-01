@@ -31,12 +31,12 @@ html[data-theme="dark"] .candidate-card[data-id] {
 }
 
 .candidate-card.candidate-card-skeleton[data-id] {
-  --skeleton-base: rgba(15, 23, 42, 0.10);
+  --skeleton-base: rgba(15, 23, 42, 0.1);
   --skeleton-highlight: rgba(15, 23, 42, 0.04);
 }
 
 html[data-theme="dark"] .candidate-card.candidate-card-skeleton[data-id] {
-  --skeleton-base: rgba(255, 255, 255, 0.10);
+  --skeleton-base: rgba(255, 255, 255, 0.1);
   --skeleton-highlight: rgba(255, 255, 255, 0.18);
 }
 
@@ -146,8 +146,8 @@ html[data-theme="light"] .candidate-card[data-id] .candidate-select-checkbox {
 html[data-theme="light"]
   .candidate-card[data-id]
   .candidate-select-checkbox:checked {
-  background: #0d6efd;
-  border-color: #0d6efd;
+  background: #0073e6;
+  border-color: #0073e6;
 }
 
 .candidate-card[data-id] .candidate-select-checkbox::before {
@@ -346,16 +346,22 @@ html[data-theme="light"]
 }
 
 /* +more should look like link */
+
 .candidate-card[data-id] .skill-expand {
   padding: 0 !important;
   border: 0 !important;
   background: transparent !important;
-  color: var(--P100) !important;
+  color: #0073e6 !important;
   font-weight: 700 !important;
   text-decoration: none;
   white-space: nowrap;
   display: inline-flex;
   align-items: baseline;
+  transition: color 0.2s;
+}
+
+html[data-theme="dark"] .candidate-card[data-id] .skill-expand {
+  color: #0073e6 !important;
 }
 
 .candidate-card[data-id] .skill-expand:hover {
@@ -392,11 +398,25 @@ html[data-theme="light"]
 }
 
 .candidate-card[data-id] .view-resume-btn {
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 0.7rem 1.4rem;
   font-weight: 800;
   font-size: 0.85rem;
   line-height: 1.1;
+  background: #0073e6 !important;
+  border-color: #0073e6 !important;
+}
+
+.candidate-card[data-id] .view-resume-btn:hover,
+.candidate-card[data-id] .view-resume-btn:focus {
+  background: #0073e6 !important;
+  border-color: #0073e6 !important;
+}
+
+.candidate-card[data-id] .view-resume-btn:active,
+.candidate-card[data-id] .view-resume-btn.active {
+  background: #0073e6 !important;
+  border-color: #0073e6 !important;
 }
 
 @media (max-width: 900px) {

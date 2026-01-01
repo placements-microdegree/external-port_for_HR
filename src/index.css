@@ -1,8 +1,13 @@
 :root {
   --P100: #4f46e5;
 
-  --app-font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --app-font-display: "Poppins", "Inter", system-ui, sans-serif;
+  --app-font-sans: Satoshi, "Satoshi Fallback" !important;
+  --app-font-display: Satoshi, "Satoshi Fallback" !important;
+
+  /* Bootstrap font variables (prevent computed font-family showing system-ui) */
+  --bs-font-sans-serif: Satoshi, "Satoshi Fallback" !important;
+  --bs-body-font-family: Satoshi, "Satoshi Fallback" !important;
+  --bs-font-monospace: Satoshi, "Satoshi Fallback" !important;
 
   /* Dark theme primitives: Premium Slate/Indigo */
   --bg: #020617;
@@ -28,15 +33,26 @@ html[data-theme="light"] {
   --border-strong: var(--bs-border-color, rgba(0, 0, 0, 0.2));
 }
 
+html {
+  font-family: var(--app-font-sans) !important;
+}
+
 body {
   margin: 0;
-  font-family: var(--app-font-sans);
+  font-family: var(--app-font-sans) !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
   font-weight: 400;
+}
+
+/* Tailwind/utility font classes: force Satoshi everywhere */
+.font-sans,
+.font-serif,
+.font-mono {
+  font-family: var(--app-font-sans) !important;
 }
 
 button,
@@ -175,8 +191,7 @@ html[data-theme="dark"] .Toastify__progress-bar {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: var(--app-font-sans);
 }
 
 .modal-backdrop {

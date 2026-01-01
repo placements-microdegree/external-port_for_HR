@@ -1,8 +1,22 @@
 .md-footer {
   color: var(--text);
   background: var(--surface-1);
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-    "Roboto", sans-serif;
+  font-family: var(--app-font-sans);
+}
+
+/* Day mode: make footer paragraph text dark on light surfaces */
+html[data-theme="light"] .md-footer__content p,
+html[data-theme="light"] .md-footer__content li,
+html[data-theme="light"] .md-footer__content li a,
+html[data-theme="light"] .md-footer__brand p,
+html[data-theme="light"] .md-footer__contact p,
+html[data-theme="light"] .md-footer__legal {
+  color: #111827;
+}
+
+/* Keep accent links highlighted in day mode */
+html[data-theme="light"] .md-footer__content a.accent {
+  color: #fbbf24;
 }
 
 .md-footer a {

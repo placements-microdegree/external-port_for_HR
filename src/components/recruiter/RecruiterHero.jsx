@@ -45,6 +45,9 @@ export default function RecruiterHero({ headerHidden, collapseOffset = 140 }) {
         <p className="mb-0">
           Verified professionals ready for interviews & fast onboarding.
         </p>
+        <button className="browse-talent-btn mt-3" type="button">
+          Browse Talent
+        </button>
       </div>
     </motion.div>
   );
