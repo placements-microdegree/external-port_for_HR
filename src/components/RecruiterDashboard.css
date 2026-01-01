@@ -150,9 +150,6 @@ html[data-theme="dark"] .recruiter-dashboard {
 }
 
 /* In dark mode, ensure all inline SVG icons render white */
-html[data-theme="dark"] .recruiter-dashboard svg {
-  color: #fff;
-}
 
 /* Bootstrap utilities used throughout the dashboard (dark theme only) */
 html[data-theme="dark"] .recruiter-dashboard .bg-white {
@@ -398,7 +395,7 @@ html:not([data-theme="dark"]) .recruiter-dashboard {
 
 .recruiter-nav-btn {
   border: none;
-  background: rgba(255, 255, 255, 0.08);
+
   color: var(--text);
   padding: 0.55rem 1.25rem;
   border-radius: 999px;
@@ -406,26 +403,32 @@ html:not([data-theme="dark"]) .recruiter-dashboard {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.8);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .recruiter-nav-btn:hover,
 .recruiter-nav-btn:focus {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 15px 30px -18px rgba(15, 23, 42, 0.9);
 }
 
 /* Accent nav button (Browse Talent) background for both themes */
 .recruiter-nav-btn.recruiter-nav-btn-accent {
-  background: #0073e6 !important;
-  color: #fff !important;
+  background: transparent !important;
+  color: #0073e6 !important;
+  box-shadow: none !important;
 }
 
 html[data-theme="dark"] .recruiter-nav-btn.recruiter-nav-btn-accent {
-  background: #0073e6 !important;
-  color: #fff !important;
+  background: transparent !important;
+  color: #0073e6 !important;
+  box-shadow: none !important;
+}
+
+.recruiter-nav-btn.recruiter-nav-btn-accent:hover,
+.recruiter-nav-btn.recruiter-nav-btn-accent:focus,
+html[data-theme="dark"] .recruiter-nav-btn.recruiter-nav-btn-accent:hover,
+html[data-theme="dark"] .recruiter-nav-btn.recruiter-nav-btn-accent:focus {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .recruiter-nav-cart {
@@ -433,20 +436,17 @@ html[data-theme="dark"] .recruiter-nav-btn.recruiter-nav-btn-accent {
   height: 48px;
   border-radius: 50%;
   border: none;
-  background: #0073e6 !important;
-  color: #fff !important;
+
+  color: #0073e6 !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
-  box-shadow: 0 18px 35px -18px #0073e6;
   position: relative;
 }
 
 html[data-theme="dark"] .recruiter-nav-cart {
-  background: #0073e6 !important;
-  color: #fff !important;
-  box-shadow: 0 18px 35px -18px #0073e6;
+  color: #0073e6 !important;
 }
 
 /* Hero section Browse Talent button (if needed) */
@@ -475,32 +475,21 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.08);
   color: var(--text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
-  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.8);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.recruiter-nav-theme:hover,
-.recruiter-nav-theme:focus {
-  transform: translateY(-2px) scale(1.03);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 15px 30px -18px rgba(15, 23, 42, 0.9);
 }
 
 .recruiter-nav-pill {
   position: absolute;
-  top: -6px;
-  right: -4px;
+  top: 0px;
+  right: -2px;
   min-width: 20px;
   height: 20px;
   border-radius: 999px;
-  background: #0f172a;
+  background: #0073e6 !important;
   color: #ffffff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -509,6 +498,13 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   justify-content: center;
   padding: 0 0.35rem;
   box-shadow: 0 0 0 2px #ffffff;
+}
+
+@media (max-width: 768px) {
+  .recruiter-nav-pill {
+    top: 4px;
+    right: 132px;
+  }
 }
 
 .recruiter-nav-btn .recruiter-nav-pill {
@@ -575,7 +571,7 @@ html[data-theme="light"] .recruiter-hero-card {
   letter-spacing: 0.2em;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--P100);
+  color: #0073e6 !important;
   margin-bottom: 0.5rem;
 }
 
