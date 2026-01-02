@@ -147,7 +147,6 @@ html[data-theme="light"]
   .candidate-card[data-id]
   .candidate-select-checkbox:checked {
   background: #0073e6;
-  border-color: #0073e6;
 }
 
 .candidate-card[data-id] .candidate-select-checkbox::before {
@@ -167,8 +166,7 @@ html[data-theme="light"]
 }
 
 .candidate-card[data-id] .candidate-select-checkbox:checked {
-  background: var(--P100);
-  border-color: var(--P100);
+  background: #0073e6;
 }
 
 .candidate-card[data-id] .candidate-select-checkbox:focus-visible {
