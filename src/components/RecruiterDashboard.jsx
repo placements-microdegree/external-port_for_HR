@@ -816,7 +816,7 @@ Thanks!`
                 <div className="d-lg-none mb-3">
                   <button
                     type="button"
-                    className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                    className="btn btn-outline-primary  d-flex align-items-center justify-content-center gap-2"
                     onClick={() => setMobileMenuOpen(true)}
                   >
                     <FaBars /> Filters
@@ -1162,7 +1162,7 @@ Thanks!`
             )}
         </AnimatePresence>
       </div>
-      <hr />
+      <hr style={{ margin: "0rem" }} />
       <Footer />
     </>
   );
