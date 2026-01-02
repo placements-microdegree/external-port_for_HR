@@ -423,6 +423,8 @@ html[data-theme="dark"] .candidate-card[data-id] .skill-expand {
   .candidate-card[data-id] .candidate-card-right {
     align-items: flex-start;
     text-align: left;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
   .candidate-card[data-id] .candidate-identity {
