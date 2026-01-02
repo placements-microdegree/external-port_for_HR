@@ -33,7 +33,6 @@ html[data-theme="dark"] .hero-browse-btn {
     gap: 0.5rem;
   }
   .recruiter-navbar-actions {
-    flex: 1 0 auto;
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
@@ -61,7 +60,6 @@ html[data-theme="dark"] .hero-browse-btn {
     margin-left: 20px;
   }
   .recruiter-navbar-actions {
-    flex: 1 1 auto;
     justify-content: flex-end;
     gap: 0.5rem;
   }
