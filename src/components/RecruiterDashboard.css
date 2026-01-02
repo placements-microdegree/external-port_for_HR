@@ -1,3 +1,8 @@
+@media (max-width: 576px) {
+  .btn {
+    width: 97% !important;
+  }
+}
 /* Hero section Browse Talent button (new class) */
 .hero-browse-btn {
   background: #0073e6 !important;
@@ -273,7 +278,7 @@ html:not([data-theme="dark"]) .recruiter-dashboard {
 }
 
 .recruiter-navbar {
-  background: var(--surface-1);
+  background: var(--bg);
   padding: 0.75rem 1.5rem;
   display: flex;
   align-items: center;
@@ -326,7 +331,7 @@ html:not([data-theme="dark"]) .recruiter-dashboard {
   flex: 1 1 300px;
   align-items: center;
   gap: 0.65rem;
-  background: var(--surface-3);
+  background: var(--surface-2);
   border-radius: 999px;
   padding: 0.35rem 0.75rem;
   color: var(--P100);
@@ -522,8 +527,8 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   margin-bottom: 1.5rem;
   padding: 3.5rem 2rem;
   border-radius: 0;
-  background: linear-gradient(180deg, rgba(79, 70, 229, 0.15), var(--bg));
-  box-shadow: 0 25px 60px -35px rgba(15, 23, 42, 0.85);
+  background: var(--bg);
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -536,8 +541,7 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
 
 /* Light theme: keep hero background light (no dark fade) */
 html[data-theme="light"] .recruiter-hero-card {
-  background: linear-gradient(180deg, var(--surface-1), var(--surface-2));
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+  background: var(--bg);
 }
 
 .hero-content {
@@ -1694,6 +1698,7 @@ html[data-theme="dark"] .candidate-column-scroll {
     overflow: visible;
     padding-right: 0;
     padding-bottom: 4rem;
+    margin-top: 63px;
   }
 }
 

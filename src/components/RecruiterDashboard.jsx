@@ -1162,6 +1162,7 @@ Thanks!`
             )}
         </AnimatePresence>
       </div>
+      <hr />
       <Footer />
     </>
   );

@@ -155,7 +155,7 @@ export default function FiltersPanel({
   }
 
   return (
-    <div className="filters-panel p-3 rounded-3 shadow-sm bg-white">
+    <div className="filters-panel p-3 rounded-3 shadow-sm ">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h5 className="mb-0 fw-bold">Filters</h5>
         <div className="d-flex align-items-center gap-2">

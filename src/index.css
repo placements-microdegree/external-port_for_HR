@@ -84,8 +84,7 @@ html[data-theme="dark"] .bg-white {
 }
 
 /* Filters panel uses .bg-white; give it the glassy dark background */
-html[data-theme="dark"] .filters-panel,
-html[data-theme="dark"] .filters-panel.bg-white,
+
 body[data-theme="dark"] .filters-panel,
 body[data-theme="dark"] .filters-panel.bg-white {
   background: rgba(255, 255, 255, 0.08) !important;

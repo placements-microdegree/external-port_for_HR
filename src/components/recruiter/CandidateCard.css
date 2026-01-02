@@ -20,7 +20,7 @@ html[data-theme="light"] .candidate-card[data-id] {
 }
 
 html[data-theme="dark"] .candidate-card[data-id] {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg);
 }
 
 /* Skeleton / shimmer (CandidateList loading state) */
