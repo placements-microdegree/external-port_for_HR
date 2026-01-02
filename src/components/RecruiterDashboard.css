@@ -1999,21 +1999,9 @@ html[data-theme="dark"] .candidate-column-scroll {
   }
 }
 
-@media (min-width: 992.98px) and (max-width: 1199.98px) {
+@media (min-width: 574.98px) and (max-width: 1107.98px) {
   .recruiter-navbar-search {
-    flex: 1 1;
-  }
-}
-
-@media (min-width: 574.98px) and (max-width: 768.98px) {
-  .recruiter-navbar-search {
-    flex: 1 1;
-  }
-}
-
-@media (min-width: 1098.98px) and (max-width: 1203.98px) {
-  .recruiter-navbar-search {
-    flex: 1 1 30%;
+    flex: 1 1 auto;
   }
 }
 
