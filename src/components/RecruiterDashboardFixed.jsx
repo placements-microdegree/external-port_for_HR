@@ -212,7 +212,7 @@ export default function RecruiterDashboardFixed() {
 
   return (
     <div className="recruiter-dashboard container-fluid py-3">
-      <ToastContainer position="top-right" />
+      <ToastContainer position="top-right" autoClose={200}/>
       <motion.div
         className="d-flex align-items-center mb-3 gap-3"
         initial={{ opacity: 0, y: -10 }}

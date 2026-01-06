@@ -742,7 +742,7 @@ Thanks!`
   return (
     <>
       <div className="recruiter-dashboard container-fluid pb-4">
-        <ToastContainer position="top-right" />
+        <ToastContainer position="top-right" autoClose={200} />
         <RecruiterNavbar
           selectedCount={cartCount}
           showSearch={heroCollapsed}
