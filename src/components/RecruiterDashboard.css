@@ -516,12 +516,27 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   box-shadow: 0 0 0 2px #ffffff;
 }
 
-@media (max-width: 768px) {
-  .recruiter-nav-pill {
+@media (max-width: 600px) {
+  .recruiter-navbar .recruiter-nav-pill {
     top: 4px;
-    right: 154px;
+    right: 250px;
   }
 }
+
+@media (max-width: 420px) {
+  .recruiter-navbar .recruiter-nav-pill {
+    top: 2px;
+    right: 162px;
+  }
+}
+
+@media (min-width: 360px) and (max-width:412px){
+  .recruiter-navbar .recruiter-nav-pill {
+    top: 2px;
+    right: 134px;
+  }
+}
+
 
 .recruiter-nav-btn .recruiter-nav-pill {
   position: static;
