@@ -107,8 +107,17 @@ export default function RecruiterNavbar({
         {menuOpen ? (
           <FaTimes aria-hidden="true" />
         ) : (
+          <>
           <FaBars aria-hidden="true" />
+         {safeSelectedCount > 0 && (
+            <span className="recruiter-nav-pill-hamburger" aria-label="Selected count">
+              {safeSelectedCount}
+            </span>
+          )}
+          </>       
+          
         )}
+        
       </button>
 
       {showSearch && (
