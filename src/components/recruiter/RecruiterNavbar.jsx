@@ -157,13 +157,15 @@ export default function RecruiterNavbar({
           className="recruiter-nav-btn recruiter-nav-btn-accent"
           onClick={onCollections}
         >
-          <FaLayerGroup aria-hidden="true" />
+          <span className="recruiter-nav-icon-container">
+            <FaLayerGroup aria-hidden="true" />
+            {safeCollectionsCount > 0 && (
+              <span className="recruiter-nav-pill" aria-label="Selected count">
+                {safeCollectionsCount}
+              </span>
+            )}
+          </span>
           <span>Top Collections</span>
-          {safeCollectionsCount > 0 && (
-            <span className="recruiter-nav-pill" aria-label="Selected count">
-              {safeCollectionsCount}
-            </span>
-          )}
         </button>
 
         <button
@@ -184,12 +186,14 @@ export default function RecruiterNavbar({
           onClick={onCart}
           aria-label="View selected candidates"
         >
-          <FaShoppingCart aria-hidden="true" />
-          {safeSelectedCount > 0 && (
-            <span className="recruiter-nav-pill" aria-label="Selected count">
-              {safeSelectedCount}
-            </span>
-          )}
+          <span className="recruiter-nav-icon-container">
+            <FaShoppingCart aria-hidden="true" />
+            {safeSelectedCount > 0 && (
+              <span className="recruiter-nav-pill" aria-label="Selected count">
+                {safeSelectedCount}
+              </span>
+            )}
+          </span>
         </button>
       </div>
     </nav>

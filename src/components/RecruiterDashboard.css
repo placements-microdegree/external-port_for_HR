@@ -480,62 +480,49 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   font-size: 1.15rem;
 }
 
+.recruiter-nav-icon-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .recruiter-nav-pill {
   position: absolute;
-  top: 0px;
-  right: -2px;
-  min-width: 20px;
-  height: 20px;
+  top: -9px;
+  right: -14px;
+  min-width: 18px;
+  height: 18px;
   border-radius: 999px;
   background: #0073e6 !important;
   color: #ffffff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.35rem;
+  padding: 0 0.3rem;
   box-shadow: 0 0 0 2px #ffffff;
 }
 
-.recruiter-nav-pill-hamburger  {
+.recruiter-nav-pill-hamburger {
   position: absolute;
-  top: 0px;
-  right: -2px;
-  min-width: 20px;
-  height: 20px;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
   border-radius: 999px;
   background: #0073e6 !important;
   color: #ffffff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.35rem;
+  padding: 0 0.3rem;
   box-shadow: 0 0 0 2px #ffffff;
 }
 
-@media (max-width: 600px) {
-  .recruiter-navbar .recruiter-nav-pill {
-    top: 4px;
-    right: 250px;
-  }
-}
-
-@media (max-width: 420px) {
-  .recruiter-navbar .recruiter-nav-pill {
-    top: 2px;
-    right: 162px;
-  }
-}
-
-@media (min-width: 360px) and (max-width:412px){
-  .recruiter-navbar .recruiter-nav-pill {
-    top: 2px;
-    right: 134px;
-  }
-}
 
 
 .recruiter-nav-btn .recruiter-nav-pill {
