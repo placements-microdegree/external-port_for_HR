@@ -209,12 +209,13 @@ html[data-theme="dark"] .recruiter-dashboard .input-group-text svg {
 
 .recruiter-dashboard .btn-outline-secondary {
   color: var(--text) !important;
-  border-color: var(--text) !important;
+  border-color: var(--text-muted) !important;
+  border-radius: 999px !important;
 }
 
 .recruiter-dashboard .btn-outline-secondary:hover,
 .recruiter-dashboard .btn-outline-secondary:focus {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: var(--surface-2);
 }
 
 .recruiter-dashboard .btn-outline-danger {
@@ -522,8 +523,6 @@ html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   padding: 0 0.3rem;
   box-shadow: 0 0 0 2px #ffffff;
 }
-
-
 
 .recruiter-nav-btn .recruiter-nav-pill {
   position: static;
@@ -1199,7 +1198,7 @@ html[data-theme="light"] .recruiter-hero-card {
 
 .candidate-role {
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: bold;
   color: var(--text-muted);
 }
 
@@ -1274,6 +1273,7 @@ html[data-theme="light"] .recruiter-hero-card {
     align-items: flex-start;
     justify-content: space-between;
     margin-right: 10px;
+    border: 2px solid var(--border-strong);
   }
 
   .candidate-card-select {

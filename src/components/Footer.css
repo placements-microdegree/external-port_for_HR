@@ -1,6 +1,6 @@
 .md-footer {
   color: var(--text);
-  background: var(--surface-1);
+  background: var(--bg);
   font-family: var(--app-font-sans);
 }
 
@@ -11,12 +11,12 @@ html[data-theme="light"] .md-footer__content li a,
 html[data-theme="light"] .md-footer__brand p,
 html[data-theme="light"] .md-footer__contact p,
 html[data-theme="light"] .md-footer__legal {
-  color: #111827;
+  color: var(--text);
 }
 
 /* Keep accent links highlighted in day mode */
 html[data-theme="light"] .md-footer__content a.accent {
-  color: #fbbf24;
+  color: var(--text);
 }
 
 .md-footer a {
@@ -83,7 +83,7 @@ html[data-theme="light"] .md-footer__content a.accent {
 
 .md-footer__hero-copy p {
   font-size: 1rem;
-  color: #e2e8f0;
+  color: var(--text);
   margin-bottom: 1.5rem;
 }
 
@@ -94,7 +94,7 @@ html[data-theme="light"] .md-footer__content a.accent {
   margin-bottom: 1rem;
   font-size: 0.75rem;
   letter-spacing: 0.3em;
-  color: #cbd5f5;
+  color: var(--text);
 }
 
 .md-footer__hero-chip span {
@@ -160,13 +160,13 @@ html[data-theme="light"] .md-footer__content a.accent {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
   padding: 3rem clamp(1.5rem, 6vw, 4rem);
-  background: var(--surface-1);
+  background: var(--bg);
 }
 
 .md-footer__col h3 {
   font-size: 1.05rem;
   margin-bottom: 1rem;
-  color: #fbbf24;
+  color: var(--text);
 }
 
 .md-footer__col ul {
@@ -179,12 +179,12 @@ html[data-theme="light"] .md-footer__content a.accent {
 }
 
 .md-footer__col li {
-  color: #cbd5f5;
+  color: var(--text);
   font-size: 0.95rem;
 }
 
 .md-footer__col li a.accent {
-  color: #fbbf24;
+  color: var(--text);
 }
 
 .md-footer__brand h2 {
@@ -197,7 +197,7 @@ html[data-theme="light"] .md-footer__content a.accent {
 }
 
 .md-footer__brand p {
-  color: #cbd5f5;
+  color: var(--text);
   font-size: 0.95rem;
   max-width: 300px;
   line-height: 1.5;
@@ -213,8 +213,8 @@ html[data-theme="light"] .md-footer__content a.accent {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #f8fafc;
-  color: #1f2937;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,7 +231,7 @@ html[data-theme="light"] .md-footer__content a.accent {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #e2e8f0;
+  color: var(--text);
   margin-bottom: 0.5rem;
 }
 
@@ -243,13 +243,13 @@ html[data-theme="light"] .md-footer__content a.accent {
   background: rgba(255, 255, 255, 0.1);
   align-items: center;
   justify-content: center;
-  color: #fbbf24;
+  color: var(--text);
   font-size: 1rem;
 }
 
 .md-footer__contact p {
   margin: 0 0 0.75rem;
-  color: #cbd5f5;
+  color: var(--text);
   line-height: 1.5;
 }
 
@@ -261,7 +261,7 @@ html[data-theme="light"] .md-footer__content a.accent {
   gap: 1rem;
   justify-content: space-between;
   font-size: 0.9rem;
-  color: #cbd5f5;
+  color: var(--text);
 }
 
 .md-footer__legal div {

@@ -3,8 +3,8 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.6rem 0.9rem;
-  border-radius: 12px;
-  border: 2px solid var(--border);
+  border-radius: 25px;
+  border: 1.3px solid var(--border);
 
   color: var(--text);
   font-family: inherit;
@@ -12,12 +12,13 @@
 }
 
 html[data-theme="light"] .candidate-card[data-id] {
-  background: #fff !important;
+  background: var(--bg);
   color: #212529;
 }
 
 html[data-theme="dark"] .candidate-card[data-id] {
   background: var(--bg);
+  border: 2px solid var(--border-strong);
 }
 
 /* Skeleton / shimmer (CandidateList loading state) */
@@ -112,8 +113,7 @@ html[data-theme="dark"] .candidate-card.candidate-card-skeleton[data-id] {
 
 .candidate-card[data-id]:hover,
 .candidate-card[data-id].active {
-  transform: none;
-  border-color: var(--border-strong);
+  box-shadow: 1px 1px 2px 1px #c6bebe;
 }
 
 .candidate-card[data-id] .candidate-card-select {
@@ -179,7 +179,6 @@ html[data-theme="light"]
 .candidate-card[data-id] .candidate-card-main {
   display: grid;
   grid-template-columns: 1fr 320px;
-  gap: 1.25rem;
   align-items: start;
   margin: -2.2px 0 3px 0;
 }
@@ -257,8 +256,9 @@ html[data-theme="light"]
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.1rem;
+  column-gap: 24px;
   margin: 0.1rem 0 0.4rem;
+  row-gap: 10px;
 }
 
 .candidate-card[data-id] .candidate-card-metrics .metric {
@@ -272,8 +272,8 @@ html[data-theme="light"]
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
-  opacity: 0.95;
+  color: var(--text);
+  opacity: 0.8;
 }
 
 .candidate-card[data-id] .candidate-card-metrics .metric .metric-content {
@@ -406,6 +406,8 @@ html[data-theme="dark"] .candidate-card[data-id] .skill-expand {
 .candidate-card[data-id] .view-resume-btn:focus {
   background: #0073e6 !important;
   border-color: #0073e6 !important;
+
+  transform: translateY(-2px);
 }
 
 .candidate-card[data-id] .view-resume-btn:active,

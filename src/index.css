@@ -10,7 +10,7 @@
   --bs-font-monospace: Satoshi, "Satoshi Fallback" !important;
 
   /* Dark theme primitives: Premium Slate/Indigo */
-  --bg: #020617;
+  --bg: #000000;
   --surface-1: #0f172a;
   --surface-2: #1e293b;
   --surface-3: rgba(255, 255, 255, 0.05); /* slightly subtle */
