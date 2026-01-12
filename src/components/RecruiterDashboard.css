@@ -1330,6 +1330,7 @@ html[data-theme="light"] .recruiter-hero-card {
 
   .candidate-role {
     font-size: 0.85rem;
+    translate: 31px -9px;
   }
 
   .candidate-meta-inline {
