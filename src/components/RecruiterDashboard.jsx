@@ -55,13 +55,25 @@ const REQUEST_FORM_INITIAL = {
 const COMPANY_WHATSAPP_NUMBER =
   process.env.REACT_APP_COMPANY_WHATSAPP_NUMBER || "6366983877";
 
-const getExperienceBucket = (value) => {
-  const num = Number.parseFloat(value);
-  if (Number.isNaN(num)) return null;
-  if (num === 0) return "fresher";
-  if (num > 0 && num <= 3) return "early";
-  if (num > 3 && num <= 7) return "mid";
-  return "senior";
+const matchesExperienceSelection = (experienceValue, selectedBucketId) => {
+  const years = Number.parseFloat(experienceValue);
+  if (Number.isNaN(years)) return false;
+
+  // Experience is stored as years (may be fractional, e.g. 0.5).
+  switch (selectedBucketId) {
+    case "fresher":
+      return years >= 0 && years <= 0.5;
+    case "early":
+      return years >= 0.5 && years <= 2;
+    case "mid":
+      return years >= 2 && years <= 4;
+    case "senior":
+      return years >= 4 && years <= 7;
+    case "supersenior":
+      return years >= 7;
+    default:
+      return false;
+  }
 };
 
 const getNoticeBucket = (value) => {
@@ -203,8 +215,10 @@ const matchesStringFilter = (filterSet, value) => {
 
 const matchesExperienceFilter = (student, filterSet) => {
   if (!filterSet.size) return true;
-  const bucket = getExperienceBucket(student.experience);
-  return Boolean(bucket && filterSet.has(bucket));
+  // OR-match: if any selected bucket matches, keep the student.
+  return Array.from(filterSet).some((bucketId) =>
+    matchesExperienceSelection(student.experience, bucketId)
+  );
 };
 
 const matchesNoticeFilter = (student, filterSet) => {

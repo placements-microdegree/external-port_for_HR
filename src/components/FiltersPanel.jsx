@@ -24,9 +24,10 @@ export default function FiltersPanel({
 
   const EXP_OPTIONS = [
     { id: "fresher", label: "0–6 months" },
-    { id: "early", label: "6 months – 3 years" },
-    { id: "mid", label: "3 – 7 years" },
-    { id: "senior", label: "7+ years" },
+    { id: "early", label: "6 months – 2 years" },
+    { id: "mid", label: "2 – 4 years" },
+    { id: "senior", label: "4 – 7 years" },
+    { id: "supersenior", label: "7+ years" },
   ];
 
   const ROLE_OPTIONS = [

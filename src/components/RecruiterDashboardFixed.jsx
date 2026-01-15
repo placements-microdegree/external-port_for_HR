@@ -182,11 +182,15 @@ export default function RecruiterDashboardFixed() {
     if (filters.experience.size > 0) {
       list = list.filter((s) => {
         const exp = parseFloat(s.experience || 0);
-        if (filters.experience.has("fresher")) if (exp === 0) return true;
+        if (filters.experience.has("fresher"))
+          if (exp >= 0 && exp <= 0.5) return true;
         if (filters.experience.has("early"))
-          if (exp > 0 && exp <= 3) return true;
-        if (filters.experience.has("mid")) if (exp > 3 && exp <= 7) return true;
-        if (filters.experience.has("senior")) if (exp > 7) return true;
+          if (exp >= 0.5 && exp <= 2) return true;
+        if (filters.experience.has("mid"))
+          if (exp >= 2 && exp <= 4) return true;
+        if (filters.experience.has("senior"))
+          if (exp >= 4 && exp <= 7) return true;
+        if (filters.experience.has("supersenior")) if (exp >= 7) return true;
         return false;
       });
     }
@@ -212,7 +216,7 @@ export default function RecruiterDashboardFixed() {
 
   return (
     <div className="recruiter-dashboard container-fluid py-3">
-      <ToastContainer position="top-right" autoClose={200}/>
+      <ToastContainer position="top-right" autoClose={200} />
       <motion.div
         className="d-flex align-items-center mb-3 gap-3"
         initial={{ opacity: 0, y: -10 }}
