@@ -62,6 +62,22 @@
 
     <!-- Tally Embed -->
     <script async src="https://tally.so/widgets/embed.js"></script>
+
+    <!-- Theme bootstrap: default to light unless user stored a preference -->
+    <script>
+      (function () {
+        try {
+          var key = "md-theme";
+          var stored = localStorage.getItem(key);
+          var theme = stored === "dark" || stored === "light" ? stored : "light";
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.style.colorScheme = "light";
+        }
+      })();
+    </script>
   </head>
 
   <body>

@@ -26,8 +26,10 @@ export default function FiltersPanel({
     { id: "fresher", label: "0–6 months" },
     { id: "early", label: "6 months – 2 years" },
     { id: "mid", label: "2 – 4 years" },
-    { id: "senior", label: "4 – 7 years" },
-    { id: "supersenior", label: "7+ years" },
+    { id: "4to5", label: "4 – 5 years" },
+    { id: "5to7", label: "5 – 7 years" },
+    { id: "7to10", label: "7 – 10 years" },
+    { id: "10plus", label: "10+ years" },
   ];
 
   const ROLE_OPTIONS = [

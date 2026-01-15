@@ -245,11 +245,11 @@ export default function CandidateCard({
             <div className="candidate-identity">
               <div className="candidate-identity-text">
                 <div className="candidate-name">
-                  <h4>
+                  <h5>
                     {student.primary_role ||
                       student.role ||
                       "Cloud Professional"}
-                  </h4>
+                  </h5>
                 </div>
                 <div className="candidate-role text-muted">
                   {student.full_name}

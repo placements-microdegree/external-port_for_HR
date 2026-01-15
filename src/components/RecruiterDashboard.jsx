@@ -64,11 +64,23 @@ const matchesExperienceSelection = (experienceValue, selectedBucketId) => {
     case "fresher":
       return years >= 0 && years <= 0.5;
     case "early":
-      return years >= 0.5 && years <= 2;
+      return years > 0.5 && years <= 2;
     case "mid":
-      return years >= 2 && years <= 4;
+      return years > 2 && years < 4;
+
+    // New buckets (used by FiltersPanel)
+    case "4to5":
+      return years >= 4 && years < 5;
+    case "5to7":
+      return years >= 5 && years < 7;
+    case "7to10":
+      return years >= 7 && years < 10;
+    case "10plus":
+      return years >= 10;
+
+    // Backward-compatible ids (no longer shown in UI)
     case "senior":
-      return years >= 4 && years <= 7;
+      return years >= 4 && years < 7;
     case "supersenior":
       return years >= 7;
     default:

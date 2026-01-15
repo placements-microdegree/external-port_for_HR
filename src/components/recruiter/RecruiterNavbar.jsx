@@ -40,7 +40,7 @@ export default function RecruiterNavbar({
   onSearchChange = noop,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(() => readStoredTheme() || "dark");
+  const [theme, setTheme] = useState(() => readStoredTheme() || "light");
   const safeSelectedCount = Number.isFinite(selectedCount) ? selectedCount : 0;
   const safeCollectionsCount = Number.isFinite(collectionsCount)
     ? collectionsCount
@@ -108,16 +108,17 @@ export default function RecruiterNavbar({
           <FaTimes aria-hidden="true" />
         ) : (
           <>
-          <FaBars aria-hidden="true" />
-         {safeSelectedCount > 0 && (
-            <span className="recruiter-nav-pill-hamburger" aria-label="Selected count">
-              {safeSelectedCount}
-            </span>
-          )}
-          </>       
-          
+            <FaBars aria-hidden="true" />
+            {safeSelectedCount > 0 && (
+              <span
+                className="recruiter-nav-pill-hamburger"
+                aria-label="Selected count"
+              >
+                {safeSelectedCount}
+              </span>
+            )}
+          </>
         )}
-        
       </button>
 
       {showSearch && (

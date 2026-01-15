@@ -185,11 +185,20 @@ export default function RecruiterDashboardFixed() {
         if (filters.experience.has("fresher"))
           if (exp >= 0 && exp <= 0.5) return true;
         if (filters.experience.has("early"))
-          if (exp >= 0.5 && exp <= 2) return true;
-        if (filters.experience.has("mid"))
-          if (exp >= 2 && exp <= 4) return true;
+          if (exp > 0.5 && exp <= 2) return true;
+        if (filters.experience.has("mid")) if (exp > 2 && exp < 4) return true;
+
+        if (filters.experience.has("4to5"))
+          if (exp >= 4 && exp < 5) return true;
+        if (filters.experience.has("5to7"))
+          if (exp >= 5 && exp < 7) return true;
+        if (filters.experience.has("7to10"))
+          if (exp >= 7 && exp < 10) return true;
+        if (filters.experience.has("10plus")) if (exp >= 10) return true;
+
+        // Backward-compatible ids (no longer shown in UI)
         if (filters.experience.has("senior"))
-          if (exp >= 4 && exp <= 7) return true;
+          if (exp >= 4 && exp < 7) return true;
         if (filters.experience.has("supersenior")) if (exp >= 7) return true;
         return false;
       });
