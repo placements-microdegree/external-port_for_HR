@@ -1,5 +1,6 @@
 # external-dashboard-placement
 
-external-dashboard-placement for company side
+external-dashboard-placement for company side 
+helps HR  to Hire Top Candidates certified by Microdegree
 
-> > > > > > > 6858f394ed8e353b24dc491424f7fc7b29752f56
+
