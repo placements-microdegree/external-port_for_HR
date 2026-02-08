@@ -7,7 +7,9 @@
   font-weight: 600;
   border: none;
   box-shadow: 0 10px 24px -18px #0073e6;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
 }
 html[data-theme="dark"] .hero-browse-btn {
   background: #0073e6 !important;
@@ -457,7 +459,9 @@ html[data-theme="dark"] .recruiter-nav-cart {
   font-weight: 600;
   border: none;
   box-shadow: 0 10px 24px -18px #0073e6;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
 }
 html[data-theme="dark"] .recruiter-header .browse-talent-btn {
   background: #0073e6 !important;
@@ -620,7 +624,9 @@ html[data-theme="light"] .recruiter-hero-card {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   animation: hero-cta-beacon 2.8s ease-in-out infinite;
   position: relative;
 }
@@ -985,7 +991,9 @@ html[data-theme="light"] .recruiter-hero-card {
 .recruiter-header {
   text-align: center;
   flex-wrap: wrap;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .recruiter-dashboard .row.g-4 {
@@ -1083,7 +1091,9 @@ html[data-theme="light"] .recruiter-hero-card {
   align-items: center;
   gap: 0.35rem;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .filter-chip:hover,
@@ -1330,7 +1340,7 @@ html[data-theme="light"] .recruiter-hero-card {
 
   .candidate-role {
     font-size: 0.85rem;
-    translate: 31px -9px;
+    translate: -1px -11px;
   }
 
   .candidate-meta-inline {

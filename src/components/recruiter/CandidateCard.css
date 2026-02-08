@@ -243,7 +243,7 @@ html[data-theme="light"]
 
 .candidate-card[data-id] .candidate-role.text-muted {
   color: var(--text-muted) !important;
-  font-size: 0.95rem;
+  font-size: 13px;
 }
 
 /* Reference screenshot doesn't show the top badge strip */
@@ -479,6 +479,10 @@ html[data-theme="dark"] .candidate-card[data-id] .skill-expand {
     margin-left: 0;
     padding: 0.6rem 1.1rem;
     white-space: nowrap;
+  }
+  .pname {
+    font-size: 15px;
+    max-width: 100%;
   }
 }
 

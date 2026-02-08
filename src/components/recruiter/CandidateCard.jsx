@@ -245,11 +245,9 @@ export default function CandidateCard({
             <div className="candidate-identity">
               <div className="candidate-identity-text">
                 <div className="candidate-name">
-                  <h5>
-                    {student.primary_role ||
-                      student.role ||
-                      "Cloud Professional"}
-                  </h5>
+                  <p className="pname">
+                    {student.primary_role || student.role || "DevOps Engineer"}
+                  </p>
                 </div>
                 <div className="candidate-role text-muted">
                   {student.full_name}
